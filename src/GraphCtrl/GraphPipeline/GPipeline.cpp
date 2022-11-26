@@ -40,6 +40,7 @@ CStatus GPipeline::init() {
 
     status += param_manager_->init();
     status += element_manager_->init();
+    status += element_manager_->dynamicInit();
     status += daemon_manager_->init();    // daemon的初始化，需要晚于所有element的初始化
     CGRAPH_FUNCTION_CHECK_STATUS
 
@@ -98,6 +99,14 @@ GPipelinePtr GPipeline::setGElementRunTtl(CMSec ttl) {
     // 在element_manager中区执行信息了，所以ttl放到
     element_manager_->element_run_ttl_ = ttl;
     return this;
+}
+
+
+CStatus GPipeline::setDynamicModule(CBOOL is_dynamic) {
+    CGRAPH_FUNCTION_BEGIN
+
+    element_manager_->setDynamicModule(is_dynamic);
+    CGRAPH_FUNCTION_END
 }
 
 CGRAPH_NAMESPACE_END

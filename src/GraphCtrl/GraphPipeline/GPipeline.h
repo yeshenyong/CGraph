@@ -133,6 +133,13 @@ public:
      */
     GPipeline* setGElementRunTtl(CMSec ttl);
 
+    /**
+     * 设置动态图运行模式
+     * @param is_dynamic 设置图运行模式
+     * @return
+     */
+    CStatus setDynamicModule(CBOOL is_dynamic = true);
+
 protected:
     explicit GPipeline();
     ~GPipeline() override;

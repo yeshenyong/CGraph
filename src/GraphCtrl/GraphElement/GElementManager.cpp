@@ -12,10 +12,13 @@ CGRAPH_NAMESPACE_BEGIN
 
 GElementManager::GElementManager() {
     this->thread_pool_ = UThreadPoolSingleton::get();
+    element_processor_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementProcessor)
 }
 
 
-GElementManager::~GElementManager() = default;
+GElementManager::~GElementManager() {
+    CGRAPH_DELETE_PTR(element_processor_)
+}
 
 
 CStatus GElementManager::init() {
@@ -51,7 +54,64 @@ CStatus GElementManager::destroy() {
 }
 
 
+CStatus GElementManager::dynamicInit() {
+    CGRAPH_FUNCTION_BEGIN
+    status = preRunCheck();
+    CGRAPH_FUNCTION_CHECK_STATUS
+
+    for (GElementPtr element : manager_elements_) {
+        status = element->fatProcessor(CFunctionType::INIT);
+        CGRAPH_FUNCTION_CHECK_STATUS
+        element->is_init_ = true;
+    }
+
+    for (GElementPtr element : manager_elements_) {
+        element->done_ = false;
+        status = element->beforeRun();
+        CGRAPH_FUNCTION_CHECK_STATUS
+    }
+    element_processor_->setElements(manager_elements_);
+
+    CGRAPH_FUNCTION_END
+}
+
+
+CVoid GElementManager::setDynamicModule(CBOOL is_dynamic) {
+    is_dynamic_ = is_dynamic;
+}
+
+
 CStatus GElementManager::run() {
+    CGRAPH_FUNCTION_BEGIN
+
+    if (is_dynamic_) {
+        printf("call out dynamic\n");
+        status = dynamicRun();
+        CGRAPH_FUNCTION_CHECK_STATUS
+    } else {
+        printf("call out status\n");
+        status = staticRun();
+        CGRAPH_FUNCTION_CHECK_STATUS
+    }
+
+    CGRAPH_FUNCTION_END
+}
+
+
+CStatus GElementManager::dynamicRun() {
+    CGRAPH_FUNCTION_BEGIN
+    status = dynamicInit();
+    CGRAPH_FUNCTION_CHECK_STATUS
+
+    element_processor_->dynmaicAsyncRun();
+    element_processor_->wait();
+
+    status = afterRunCheckDynamic();
+    CGRAPH_FUNCTION_END
+}
+
+
+CStatus GElementManager::staticRun() {
     CGRAPH_FUNCTION_BEGIN
 
     CSize runElementSize = 0;    // 用于记录执行的element的总数，用于后期校验
@@ -210,6 +270,20 @@ CStatus GElementManager::afterRunCheck(CSize runNodeSize) {
             if (!cluster.isElementsDone()) {
                 CGRAPH_RETURN_ERROR_STATUS("pipeline done status check failed...");
             }
+        }
+    }
+
+    CGRAPH_FUNCTION_END
+}
+
+
+CStatus GElementManager::afterRunCheckDynamic() {
+    CGRAPH_FUNCTION_BEGIN
+
+    for (GElementPtr element : manager_elements_) {
+        if (!element->done_) {
+            printf("element node = %s\n", element->getName().c_str());
+            CGRAPH_RETURN_ERROR_STATUS("pipeline done status check failed...");
         }
     }
 

@@ -11,6 +11,7 @@
 
 #include "GElement.h"
 #include "GElementSorter.h"
+#include "GElementProcessor.h"
 #include "GGroup/GCluster/GCluster.h"
 
 CGRAPH_NAMESPACE_BEGIN
@@ -24,6 +25,16 @@ protected:
     CStatus init() override;
     CStatus run() override;
     CStatus destroy() override;
+    CStatus dynamicInit();
+    CStatus staticRun();
+    CStatus dynamicRun();
+
+    /**
+     * 设置动态图标志位
+     * @param is_dynamic
+     * @return
+     */
+    CVoid setDynamicModule(CBOOL is_dynamic);
 
     /**
      * 判定哪些节点是可以分到一个cluster中的
@@ -44,6 +55,13 @@ protected:
      * @return
      */
     CStatus afterRunCheck(CSize runNodeSize);
+
+    /**
+     * 动态图执行完毕后，确认运行是否正常
+     * @param
+     * @return
+     */
+    CStatus afterRunCheckDynamic();
 
     /**
      * 添加一个元素信息
@@ -75,7 +93,9 @@ private:
     GSortedGElementPtrSet manager_elements_;                    // 保存节点信息的内容
     ParaWorkedClusterArrs para_cluster_arrs_;                   // 可以并行的cluster数组
     UThreadPoolPtr thread_pool_ { nullptr };                    // 内部执行的线程池
+    GElementProcessorPtr element_processor_ { nullptr };        // 动态图执行器
     CMSec element_run_ttl_ = CGRAPH_DEFAULT_ELEMENT_RUN_TTL;    // 单个节点最大运行周期
+    CBOOL is_dynamic_ = false;                                  // 动态图标志位
 
     friend class GPipeline;
     friend class GRegion;

@@ -44,6 +44,7 @@ set(CGRAPH_TUTORIAL_LIST
         T14-Hold
         T15-ElementParam
         T16-Message
+        T17-ElementComplex
         TU01-ThreadPool
         # TU02-Lru
         # TU03-Trie
