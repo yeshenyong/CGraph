@@ -205,6 +205,13 @@ protected:
      */
     CStatus fatProcessor(const CFunctionType& type);
 
+    /**
+     * 获取执行线程对应的信息
+     * @return
+     * @notice 辅助线程返回-1
+     */
+    int getThreadNum();
+
     CGRAPH_NO_ALLOWED_COPY(GElement);
 
 protected:
@@ -221,7 +228,7 @@ protected:
     GParamManagerPtr param_manager_ { nullptr };     // 整体流程的参数管理类，所有pipeline中的所有节点共享
     GAspectManagerPtr aspect_manager_ { nullptr };   // 整体流程的切面管理类
     UThreadPoolPtr thread_pool_ { nullptr };         // 用于执行的线程池信息
-    GElementParamKV local_params_;                   // 用于记录当前element的内部参数
+    GElementParamMap local_params_;                  // 用于记录当前element的内部参数
 
     friend class GNode;
     friend class GCluster;

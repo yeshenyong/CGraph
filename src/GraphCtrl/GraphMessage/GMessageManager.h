@@ -139,12 +139,17 @@ protected:
         CGRAPH_EMPTY_FUNCTION
     }
 
+    ~GMessageManager() override {
+        clear();    // 释放所有的信息
+    }
 
 private:
     std::unordered_map<std::string, GMessagePtr<T> > message_map_;    // 记录 topic 和 message queue 信息
 
     template<typename U, USingletonType, CBool> friend class USingleton;
 };
+
+static USingleton<GMessageManager<>, USingletonType::LAZY, false> GMessageManagerSingleton;    // 对外提供的GMessageManager方式
 
 CGRAPH_NAMESPACE_END
 

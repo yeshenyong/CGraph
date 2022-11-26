@@ -101,6 +101,7 @@ CStatus GElement::process(bool isMock) {
 CStatus GElement::addDependGElements(const GElementPtrSet& elements) {
     CGRAPH_FUNCTION_BEGIN
     for (GElementPtr cur: elements) {
+        CGRAPH_ASSERT_NOT_NULL(cur)
         if (this == cur) {
             continue;
         }
@@ -207,6 +208,16 @@ CStatus GElement::crashed(const CException& ex) {
      * 如果需要处理的话，可以通过覆写此函数来
      */
     CGRAPH_THROW_EXCEPTION(ex.what())
+}
+
+
+int GElement::getThreadNum() {
+    if (nullptr == thread_pool_) {
+        return -1;    // 理论不存在的情况
+    }
+
+    auto tid = (CSize)std::hash<std::thread::id>{}(std::this_thread::get_id());
+    return thread_pool_->getThreadNum(tid);
 }
 
 CGRAPH_NAMESPACE_END

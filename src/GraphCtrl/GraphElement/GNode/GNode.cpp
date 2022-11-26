@@ -30,10 +30,4 @@ GNode* GNode::setType(const GNodeType& type) {
     return this;
 }
 
-
-CSize GNode::getThreadId() {
-    const CSize& tid = (CSize)std::hash<std::thread::id>{}(std::this_thread::get_id());
-    return tid;
-}
-
 CGRAPH_NAMESPACE_END
