@@ -14,6 +14,7 @@ CGRAPH_NAMESPACE_BEGIN
 
 GRegion::GRegion() : GGroup() {
     manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementManager)
+    manager_->setStaticModule();
     is_init_ = false;
 }
 
@@ -66,7 +67,7 @@ CStatus GRegion::addElement(GElementPtr element) {
     CGRAPH_ASSERT_NOT_NULL(element)
     CGRAPH_ASSERT_NOT_NULL(manager_)
 
-    manager_->manager_elements_.emplace(element);
+    manager_->add(element);
     CGRAPH_FUNCTION_END
 }
 

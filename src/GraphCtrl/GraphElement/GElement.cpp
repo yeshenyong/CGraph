@@ -105,9 +105,6 @@ CStatus GElement::addDependGElements(const GElementPtrSet& elements) {
         if (this == cur) {
             continue;
         }
-        if (nullptr == cur) {
-            CGRAPH_RETURN_ERROR_STATUS("element has not been initialized");
-        }
 
         cur->run_before_.insert(this);
         this->dependence_.insert(cur);

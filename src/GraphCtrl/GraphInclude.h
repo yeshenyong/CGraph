@@ -15,5 +15,6 @@
 #include "GraphAspect/GAspectInclude.h"
 #include "GraphDaemon/GDaemonInclude.h"
 #include "GraphMessage/GMessageInclude.h"
+#include "GraphEngine/GEngineInclude.h"
 
 #endif //CGRAPH_GRAPHINCLUDE_H

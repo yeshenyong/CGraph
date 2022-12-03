@@ -96,8 +96,24 @@ GPipelinePtr GPipeline::setGElementRunTtl(CMSec ttl) {
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
 
     // 在element_manager中区执行信息了，所以ttl放到
-    element_manager_->element_run_ttl_ = ttl;
+    element_manager_->setGElementRunTtl(ttl);
     return this;
+}
+
+
+CStatus GPipeline::setDynamicModule() {
+    CGRAPH_FUNCTION_BEGIN
+
+    element_manager_->setDynamicModule();
+    CGRAPH_FUNCTION_END
+}
+
+
+CStatus GPipeline::setStaticModule() {
+    CGRAPH_FUNCTION_BEGIN
+
+    element_manager_->setStaticModule();
+    CGRAPH_FUNCTION_END
 }
 
 CGRAPH_NAMESPACE_END
