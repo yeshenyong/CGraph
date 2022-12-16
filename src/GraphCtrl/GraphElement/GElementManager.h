@@ -60,6 +60,13 @@ protected:
     GElementManager* setScheduleStrategy(int strategy);
 
     /**
+     * 调整图引擎静态运行, 仅支持region
+     * @param
+     * @return
+    */
+    CStatus setStaticModule();
+
+    /**
      * 构造执行引擎
      * @param strategy
      * @return

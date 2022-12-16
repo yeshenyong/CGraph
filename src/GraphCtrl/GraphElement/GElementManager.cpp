@@ -118,11 +118,22 @@ GElementManager* GElementManager::setScheduleStrategy(int strategy) {
 }
 
 
+CStatus GElementManager::setStaticModule() {
+    CGRAPH_FUNCTION_BEGIN
+
+    CGRAPH_DELETE_PTR(engine_)
+    engine_ = CGRAPH_SAFE_MALLOC_COBJECT(GStaticEngine);
+
+    CGRAPH_FUNCTION_END
+}
+
+
 CStatus GElementManager::initEngine() {
     CGRAPH_FUNCTION_BEGIN
-    CGRAPH_DELETE_PTR(engine_)
-    // 这里可以根据一系列策略，来确定执行引擎的类型。暂时默认为是静态执行的
-    engine_ = CGRAPH_SAFE_MALLOC_COBJECT(GStaticEngine)
+    // 这里可以根据一系列策略，来确定执行引擎的类型。暂时默认为是动态执行的
+    if (nullptr == engine_) {
+        engine_ = CGRAPH_SAFE_MALLOC_COBJECT(GDynamicEngine);
+    }
     status = engine_->setUp(manager_elements_);
 
     CGRAPH_FUNCTION_END

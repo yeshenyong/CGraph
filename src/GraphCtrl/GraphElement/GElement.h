@@ -239,6 +239,7 @@ protected:
     friend class GPipeline;
     friend class GElementSorter;
     friend class GStaticEngine;
+    friend class GDynamicEngine;
     template<typename T> friend class GSingleton;
 };
 
