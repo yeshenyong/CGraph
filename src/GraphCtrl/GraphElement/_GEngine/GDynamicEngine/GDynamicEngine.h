@@ -58,13 +58,6 @@ protected:
     CVoid afterElementRun(GElementPtr element);
 
     /**
-     * 起始节点运行检验
-     * @param element
-     * @return
-     */
-    CBool checkElement(GElementPtr element) const;
-
-    /**
      * 动态图运行等待
      * @param
      * @return
@@ -83,6 +76,7 @@ private:
     std::condition_variable cv_;
     GSortedGElementPtrSet manager_elements_;                    // 保存节点信息的内容
     CUint end_size_ = 0;
+    CUint execute_end_size_ = 0;
 };
 
 CGRAPH_NAMESPACE_END

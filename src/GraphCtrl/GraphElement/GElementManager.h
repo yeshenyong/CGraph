@@ -17,6 +17,13 @@
 CGRAPH_NAMESPACE_BEGIN
 
 class GElementManager : public GraphObject, public GraphManager<GElement> {
+public:
+    enum class RUNNING_MODULE {
+        DYNAMIC = 0,
+        STATIC = 1,
+        UNKNOWN = 100
+    };
+
 protected:
     explicit GElementManager();
     ~GElementManager() override;
@@ -60,11 +67,11 @@ protected:
     GElementManager* setScheduleStrategy(int strategy);
 
     /**
-     * 调整图引擎静态运行, 仅支持region
+     * 调整图引擎运行模式
      * @param
      * @return
     */
-    CStatus setStaticModule();
+    CStatus setExecuteModule(RUNNING_MODULE running_model = RUNNING_MODULE::DYNAMIC);
 
     /**
      * 构造执行引擎
@@ -76,6 +83,7 @@ protected:
 private:
     GSortedGElementPtrSet manager_elements_;                    // 保存节点信息的内容
     GEnginePtr engine_ = nullptr;                               // 执行引擎
+    RUNNING_MODULE running_module_ = RUNNING_MODULE::DYNAMIC;   // 默认引擎执行方式
 
     friend class GPipeline;
     friend class GRegion;

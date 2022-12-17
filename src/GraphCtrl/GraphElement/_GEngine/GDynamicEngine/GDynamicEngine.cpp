@@ -13,6 +13,12 @@ CGRAPH_NAMESPACE_BEGIN
 CStatus GDynamicEngine::setUp(const GSortedGElementPtrSet& elements) {
     CGRAPH_FUNCTION_BEGIN
 
+    end_size_ = 0;
+    for (GElementPtr element : elements) {
+        if (element->run_before_.empty()) {
+            end_size_++;
+        }
+    }
     manager_elements_ = elements;
 
     CGRAPH_FUNCTION_END
@@ -46,8 +52,10 @@ CStatus GDynamicEngine::afterRunCheck() {
 
 
 CVoid GDynamicEngine::asyncRun() {
+
+    execute_end_size_ = end_size_;
     for (const auto& element : manager_elements_) {
-        if (checkElement(element)) {
+        if (element->dependence_.empty() && !element->done_) {
             runElementTask(element);
         }
     }
@@ -57,14 +65,10 @@ CVoid GDynamicEngine::asyncRun() {
 CStatus GDynamicEngine::beforeRun() {
     CGRAPH_FUNCTION_BEGIN
 
-    end_size_ = 0;
     for (GElementPtr element : manager_elements_) {
         element->done_ = false;
         status = element->beforeRun();
         CGRAPH_FUNCTION_CHECK_STATUS
-        if (element->run_before_.size() == 0) {
-            end_size_++;
-        }
     }
 
     CGRAPH_FUNCTION_END
@@ -92,21 +96,16 @@ CVoid GDynamicEngine::afterElementRun(GElementPtr element) {
         runElementTask(run_before_element);
     }
 
-    if (element->run_before_.size() == 0) {
+    if (element->run_before_.empty()) {
         this->decreaseEnd();
     }
-}
-
-
-CBool GDynamicEngine::checkElement(GElementPtr element) const {
-    return element->dependence_.size() == 0 && !element->done_;
 }
 
 
 CVoid GDynamicEngine::wait() {
     CGRAPH_UNIQUE_LOCK lock(lock_);
 
-    while(end_size_ > 0) {
+    while(execute_end_size_ > 0) {
         cv_.wait(lock);
     }
 
@@ -115,11 +114,11 @@ CVoid GDynamicEngine::wait() {
 
 CUint GDynamicEngine::decreaseEnd() {
     CGRAPH_UNIQUE_LOCK lock(lock_);
-    --end_size_;
-    if (end_size_ <= 0) {
-        cv_.notify_all();
+    --execute_end_size_;
+    if (execute_end_size_ <= 0) {
+        cv_.notify_one();
     }
-    return end_size_;
+    return execute_end_size_;
 }
 
 CGRAPH_NAMESPACE_END
