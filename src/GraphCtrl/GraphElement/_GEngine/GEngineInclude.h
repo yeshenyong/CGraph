@@ -10,6 +10,7 @@
 #define CGRAPH_GENGINEINCLUDE_H
 
 #include "GEngine.h"
+#include "GEngineDefine.h"
 #include "GStaticEngine/GStaticEngine.h"
 #include "GDynamicEngine/GDynamicEngine.h"
 
