@@ -28,9 +28,12 @@ void tutorial_param() {
 
     status = pipeline->init();
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 200000; i++) {
         status = pipeline->run();
-        std::cout << "[CGraph] tutorial_param, loop : " << i + 1 << ", and run status = " << status.getCode() << std::endl;
+        if (i % 10000) {
+            printf("i=%d\n", i);
+        }
+        // std::cout << "[CGraph] tutorial_param, loop : " << i + 1 << ", and run status = " << status.getCode() << std::endl;
     }
 
     status = pipeline->destroy();
