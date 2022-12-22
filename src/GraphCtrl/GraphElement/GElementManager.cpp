@@ -118,10 +118,10 @@ GElementManager* GElementManager::setScheduleStrategy(int strategy) {
 }
 
 
-CStatus GElementManager::setExecuteModule(GEngineType engine_type) {
+CStatus GElementManager::setExecuteModule(GEngineType engineType) {
     CGRAPH_FUNCTION_BEGIN
 
-    engine_type_ = engine_type;
+    engine_type_ = engineType;
     CGRAPH_FUNCTION_END
 }
 

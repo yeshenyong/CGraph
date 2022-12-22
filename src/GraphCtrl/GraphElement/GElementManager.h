@@ -64,7 +64,7 @@ protected:
      * @param
      * @return
     */
-    CStatus setExecuteModule(GEngineType engine_type = GEngineType::DYNAMIC);
+    CStatus setExecuteModule(GEngineType engineType = GEngineType::DYNAMIC);
 
     /**
      * 构造执行引擎
