@@ -5,23 +5,24 @@
   <a href="https://github.com/ChunelFeng/CGraph/network/members"><img src="https://badgen.net/github/forks/ChunelFeng/CGraph?color=cyan" alt="forks"></a>
 </p>
 
+[![awesome-cpp](https://badgen.net/badge/icon/awesome-cpp/purple?icon=awesome&label&color)](https://github.com/fffaraz/awesome-cpp)
+[![HelloGithub](https://badgen.net/badge/icon/HelloGithub/purple?icon=awesome&label&color)](https://github.com/521xueweihan/HelloGitHub/blob/master/content/HelloGitHub70.md)
+
 <h1 align="center">
   CGraph 说明文档
 </h1>
 
->CGraph is a cross-platform `DAG`(Directed Acyclic Graph) framework based on pure C++ without any 3rd-party.</br></br>
->You, with it, can build your own operators simply, and describe any running schedules as you need, such as dependence, parallelling, aggregation and so on. Some useful tools and plugins are also provided to improve your project.</br></br>
->Tutorials and contact information are shown as follows. Please get in touch with us for free if you need more about this repository.
+>CGraph is a cross-platform <b>D</b>irected <b>A</b>cyclic <b>G</b>raph framework based on pure C++ without any 3rd-party.</br></br>
+>You, with it, can build your own operators simply, and describe any running schedules as you need, such as dependence, parallelling, aggregation and so on. Some useful tools and plugins are also provide to improve your project.</br></br>
+>Tutorials and contact information are show as follows. Please get in touch with us for free if you need more about this repository.
 
 ## 一. 简介
 
 `CGraph`中文名为【色丶图】，是一套无任何第三方依赖的跨平台图流程执行框架。通过`GPipeline`(流水线)底层调度，实现了依赖元素依次顺序执行、非依赖元素并发执行的调度功能。
 
-使用者只需继承`GNode`(节点)类，实现子类的run()方法，并根据需要设定依赖关系，即可实现任务的图化执行。
+使用者只需继承`GNode`(节点)类，实现子类的run()方法，并根据需要设定依赖关系，即可实现任务的图化执行。还可以通过设定各种包含多节点信息的`GGroup`(组)，自行控制图的条件判断、循环和并发执行逻辑。
 
-同时，使用者还可以通过设定各种包含多节点信息的`GGroup`(组)，自行控制图的条件判断、循环和并发执行逻辑。
-
-此外，还可以通过添加`GAspect`(切面)的方式，实现以上各种元素功能的横向扩展，或是通过引入各种`GAdapter`(适配器)对单个节点功能进行加强。
+项目提供了丰富的参数类型，用于不同应用场景下的数据互通。此外，还可以通过添加`GAspect`(切面)的方式，实现以上各种元素功能的横向扩展。或是通过引入`GAdapter`(适配器)对单个节点功能进行加强。
 
 ![CGraph Skeleton](https://github.com/ChunelFeng/CGraph/blob/main/doc/image/CGraph%20Skeleton.jpg)
 <br>
@@ -43,7 +44,7 @@
   $ make -j8
   ```
 
-* 提供基于`Ubuntu 20.04.3`的Docker镜像。输入以下指令，即可获取并进入
+* 提供基于`Ubuntu 20.04`的Docker镜像。输入以下指令，即可获取并进入
   ```shell
   $ docker pull chunelfeng/cenv                         # 获取docker镜像
   $ docker run -it --name CGraphEnv chunelfeng/cenv     # 开启docker容器，并进入
@@ -57,9 +58,9 @@
 
 ## 三. 使用Demo
 
-#### MyNode1.h
+#### MyNode.h
 ```cpp
-#include "../../src/CGraph.h"
+#include "../src/CGraph.h"
 
 class MyNode1 : public CGraph::GNode {
 public:
@@ -70,11 +71,7 @@ public:
         return status;
     }
 };
-```
 
-#### MyNode2.h
-```cpp
-#include "../../src/CGraph.h"
 
 class MyNode2 : public CGraph::GNode {
 public:
@@ -89,8 +86,7 @@ public:
 
 #### main.cpp
 ```cpp
-#include "MyGNode/MyNode1.h"
-#include "MyGNode/MyNode2.h"
+#include "MyNode.h"
 
 using namespace CGraph;
 
@@ -128,6 +124,7 @@ int main() {
 * [纯序员给你介绍图化框架的简单实现——条件判断](http://www.chunel.cn/archives/cgraph-condition-introduce)
 * [纯序员给你介绍图化框架的简单实现——面向切面](http://www.chunel.cn/archives/cgraph-aspect-introduce)
 * [纯序员给你介绍图化框架的简单实现——函数注入](http://www.chunel.cn/archives/cgraph-function-introduce)
+* [纯序员给你介绍图化框架的简单实现——消息机制](http://www.chunel.cn/archives/cgraph-message-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（一）](http://www.chunel.cn/archives/cgraph-threadpool-1-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（二）](http://www.chunel.cn/archives/cgraph-threadpool-2-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（三）](http://www.chunel.cn/archives/cgraph-threadpool-3-introduce)
@@ -242,7 +239,7 @@ int main() {
 * 提供一键编译脚本
 
 [2022.05.29 - v2.1.0 - Chunel]
-* 提供element参数写入方法
+* 提供`element`参数写入方法
 * 提供针对C++14版本的支持，个别功能有裁剪
 * 更新`tutorial`内容
 
@@ -251,7 +248,7 @@ int main() {
 * 优化`group`执行逻辑
 
 [2022.11.03 - v2.2.0 - Chunel]
-* 提供`message`(消息)功能，用于实现不同`pipeline`之间`element`的数据传递机制
+* 提供`message`(消息)功能，主要用于完成不同`pipeline`之间的数据传递
 * 更新`tutorial`内容
 
 </details>
@@ -266,14 +263,14 @@ int main() {
 
 <p align="center"><img src="https://github.com/ChunelFeng/CGraph/blob/main/doc/image/HelloGithub%20Logo.gif"/></p>
 
-* 感谢《Github中文排行榜》介绍和推荐：[Github中文排行榜 新秀榜-C++分类](https://github.com/GrowingGit/GitHub-Chinese-Top-Charts/blob/master/content/charts/new_repo/software/CPP.md)
+* 感谢《Github中文排行榜》介绍和推荐：[Github中文排行榜 增速榜-C++分类](https://github.com/GrowingGit/GitHub-Chinese-Top-Charts/blob/master/content/charts/growth/knowledge/CPP.md)
 
 <p align="center"><img src="https://github.com/ChunelFeng/CGraph/blob/main/doc/image/GrowingGit%20Logo.png"/></p>
 
 * Thanks to the recommendation from [awesome-cpp](https://github.com/fffaraz/awesome-cpp), we all know, it is the most authoritative recommendation list for cpp project in the world
 * Thanks to the recommendation from `Taskflow Group`: [awesome-parallel-computing](https://github.com/taskflow/awesome-parallel-computing), and we always treat [taskflow](https://github.com/taskflow/taskflow) as a role model
 * Thanks to the recommendation from [awesome-workflow-engines](https://github.com/meirwah/awesome-workflow-engines)
-* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) 等朋友（以贡献时间先后为顺序）为项目做出的贡献
+* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) 等朋友（以贡献时间先后为顺序）为项目做出的贡献
 * 感谢所有为`CGraph`项目提出的意见和建议的朋友，在此不一一提及。随时欢迎大家加入，一起共建
 
 </details>

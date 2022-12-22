@@ -20,6 +20,13 @@ template<typename T, CUint capacity = CGRAPH_DEFAULT_RINGBUFFER_SIZE,
 class GMessage : public GMessageObject {
 public:
     /**
+     * 析构函数。释放前，要先释放队列中所有的信息
+     */
+    ~GMessage() override {
+        queue_.clear();
+    }
+
+    /**
      * 写入参数
      * @param value
      * @return
@@ -42,12 +49,13 @@ public:
     }
 
     /**
-     *
+     * 设置容量大小
      * @param size
      * @return
      */
-    CVoid setCapacity(CUint size) {
+    GMessage* setCapacity(CUint size) {
         queue_.setCapacity(size);
+        return this;
     }
 
     /**
@@ -56,13 +64,6 @@ public:
      */
     [[nodiscard]] CUint getCapacity() const {
         return queue_.getCapacity();
-    }
-
-    /**
-     * 析构函数。释放前，要先释放队列中所有的信息
-     */
-    ~GMessage() override {
-        queue_.clear();    // 将内部的队列释放
     }
 
 private:

@@ -16,13 +16,13 @@
 #include <algorithm>
 
 #include "GElementDefine.h"
-#include "../GraphObject.h"
+#include "GElementObject.h"
 #include "../GraphParam/GParamInclude.h"
 #include "../GraphAspect/GAspectInclude.h"
 
 CGRAPH_NAMESPACE_BEGIN
 
-class GElement : public GraphObject {
+class GElement : public GElementObject {
 public:
     /**
      * 获取name信息
@@ -205,6 +205,13 @@ protected:
      */
     CStatus fatProcessor(const CFunctionType& type);
 
+    /**
+     * 获取执行线程对应的信息
+     * @return
+     * @notice 辅助线程返回-1
+     */
+    int getThreadNum();
+
     CGRAPH_NO_ALLOWED_COPY(GElement);
 
 protected:
@@ -221,7 +228,7 @@ protected:
     GParamManagerPtr param_manager_ { nullptr };     // 整体流程的参数管理类，所有pipeline中的所有节点共享
     GAspectManagerPtr aspect_manager_ { nullptr };   // 整体流程的切面管理类
     UThreadPoolPtr thread_pool_ { nullptr };         // 用于执行的线程池信息
-    GElementParamKV local_params_;                   // 用于记录当前element的内部参数
+    GElementParamMap local_params_;                  // 用于记录当前element的内部参数
 
     friend class GNode;
     friend class GCluster;
@@ -231,6 +238,7 @@ protected:
     friend class GGroup;
     friend class GPipeline;
     friend class GElementSorter;
+    friend class GStaticEngine;
     template<typename T> friend class GSingleton;
 };
 

@@ -45,12 +45,6 @@ protected:
     template<typename Func, typename... Args>
     static CStatus doDetach(const Func&& func, Args&&... args);
 
-    /**
-    * 获取当前执行的线程id信息
-    * @return
-    */
-    static CSize getThreadId();
-
 private:
     GNodeType node_type_;                    // 节点类型
 };

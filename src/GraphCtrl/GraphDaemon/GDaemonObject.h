@@ -3,7 +3,7 @@
 @Contact: chunel@foxmail.com
 @File: GDaemonObject.h
 @Time: 2022/2/2 9:36 下午
-@Desc: 
+@Desc:
 ***************************/
 
 #ifndef CGRAPH_GDAEMONOBJECT_H
@@ -15,17 +15,9 @@
 CGRAPH_NAMESPACE_BEGIN
 
 class GDaemonObject : public GraphObject {
-
 protected:
-    /**
-     * 设置参数管理器，这里是统一设置。入参可以为空
-     * @param pm
-     * @return
-     */
-    virtual GDaemonObject* setPipelineParamManager(GParamManagerPtr pm) {
-        CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(pm)
-        this->pipeline_param_manager_ = pm;
-        return this;
+    ~GDaemonObject() override {
+        CGRAPH_DELETE_PTR(param_)
     }
 
     /**
@@ -41,6 +33,16 @@ protected:
         return this;
     }
 
+    /**
+     * 设置daemon中参数，类型为GDaemonParam (即：GPassedParam)
+     * @tparam T
+     * @param param
+     * @return
+     */
+    template <typename DParam,
+            std::enable_if_t<std::is_base_of<GDaemonParam, DParam>::value, int> = 0>
+    GDaemonObject* setDParam(DParam* param);
+
 private:
     /**
      * 所有Daemon均不执行run方法
@@ -55,10 +57,14 @@ private:
     friend class GPipeline;
 
 private:
-    GParamManagerPtr pipeline_param_manager_ = nullptr;        // 获取参数管理类
+    GDaemonParamPtr param_ = nullptr;                          // 用于存储daemon对象
     CMSec interval_ = 0;
 };
 
+using GDaemonObjectPtr = GDaemonObject *;
+
 CGRAPH_NAMESPACE_END
+
+#include "GDaemonObject.inl"
 
 #endif //CGRAPH_GDAEMONOBJECT_H
