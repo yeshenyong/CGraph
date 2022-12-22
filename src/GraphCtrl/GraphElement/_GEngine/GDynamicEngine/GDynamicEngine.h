@@ -14,7 +14,6 @@
 CGRAPH_NAMESPACE_BEGIN
 
 class GDynamicEngine : public GEngine {
-
 protected:
     CStatus setUp(const GSortedGElementPtrSet& elements) override;
 
@@ -69,14 +68,14 @@ protected:
      * @param
      * @return
     */
-    CUint decreaseEnd();
+    CVoid decreaseEnd();
 
 private:
     mutable std::mutex lock_;
     std::condition_variable cv_;
     GSortedGElementPtrSet manager_elements_;                    // 保存节点信息的内容
-    CUint end_size_ = 0;
-    CUint execute_end_size_ = 0;
+    CUint end_size_ = 0;                                        // 图结束节点数量
+    CUint execute_end_size_ = 0;                                // 执行结束节点数量
 };
 
 CGRAPH_NAMESPACE_END

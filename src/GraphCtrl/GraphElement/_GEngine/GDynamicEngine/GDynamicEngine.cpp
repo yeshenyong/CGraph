@@ -1,7 +1,7 @@
 /***************************
 @Author: YeShenYong
 @Contact: 1050575224@qq.com
-@File: GDynamicEngine.h
+@File: GDynamicEngine.cpp
 @Time: 2022/12/16 22:46 下午
 @Desc: 
 ***************************/
@@ -41,9 +41,9 @@ CStatus GDynamicEngine::run() {
 CStatus GDynamicEngine::afterRunCheck() {
     CGRAPH_FUNCTION_BEGIN
 
-    for (const GElementPtr element : manager_elements_) {
+    for (GElementPtr element : manager_elements_) {
         if (!element->done_) {
-            CGRAPH_RETURN_ERROR_STATUS("pipeline done status check failed...");
+            CGRAPH_RETURN_ERROR_STATUS("pipeline run check failed...");
         }
     }
 
@@ -52,7 +52,6 @@ CStatus GDynamicEngine::afterRunCheck() {
 
 
 CVoid GDynamicEngine::asyncRun() {
-
     execute_end_size_ = end_size_;
     for (const auto& element : manager_elements_) {
         if (element->dependence_.empty() && !element->done_) {
@@ -89,11 +88,11 @@ CVoid GDynamicEngine::runElement(GElementPtr element) {
 CVoid GDynamicEngine::afterElementRun(GElementPtr element) {
     element->done_ = true;
 
-    for(auto run_before_element : element->run_before_) {
-        run_before_element->left_depend_--;
-        if (run_before_element->left_depend_ > 0) continue;
+    for(auto cur : element->run_before_) {
+        cur->left_depend_--;
+        if (cur->left_depend_ > 0) continue;
 
-        runElementTask(run_before_element);
+        runElementTask(cur);
     }
 
     if (element->run_before_.empty()) {
@@ -108,17 +107,15 @@ CVoid GDynamicEngine::wait() {
     while(execute_end_size_ > 0) {
         cv_.wait(lock);
     }
-
 }
 
 
-CUint GDynamicEngine::decreaseEnd() {
+CVoid GDynamicEngine::decreaseEnd() {
     CGRAPH_UNIQUE_LOCK lock(lock_);
     --execute_end_size_;
     if (execute_end_size_ <= 0) {
         cv_.notify_one();
     }
-    return execute_end_size_;
 }
 
 CGRAPH_NAMESPACE_END

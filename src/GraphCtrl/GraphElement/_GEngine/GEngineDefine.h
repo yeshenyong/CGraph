@@ -12,9 +12,8 @@
 CGRAPH_NAMESPACE_BEGIN
 
 enum class GEngineType {
-    DYNAMIC = 0,
-    STATIC = 1,
-    UNKNOWN = 100
+    STATIC = 1,             /** 静态图运行 */
+    DYNAMIC = 2             /** 动态图运行 */
 };
 
 CGRAPH_NAMESPACE_END
