@@ -52,7 +52,6 @@ CStatus GDynamicEngine::afterRunCheck() {
 
 
 CVoid GDynamicEngine::asyncRun() {
-    execute_end_size_ = end_size_;
     for (const auto& element : manager_elements_) {
         if (element->dependence_.empty() && !element->done_) {
             runElementTask(element);
@@ -69,6 +68,7 @@ CStatus GDynamicEngine::beforeRun() {
         status = element->beforeRun();
         CGRAPH_FUNCTION_CHECK_STATUS
     }
+    finish_end_size = 0;
 
     CGRAPH_FUNCTION_END
 }
@@ -89,8 +89,8 @@ CVoid GDynamicEngine::afterElementRun(GElementPtr element) {
     element->done_ = true;
 
     for(auto cur : element->run_before_) {
-        cur->left_depend_--;
-        if (cur->left_depend_ > 0) continue;
+        bool runnableElement = (--cur->left_depend_) == 0;
+        if (!runnableElement) continue;
 
         runElementTask(cur);
     }
@@ -104,7 +104,7 @@ CVoid GDynamicEngine::afterElementRun(GElementPtr element) {
 CVoid GDynamicEngine::wait() {
     CGRAPH_UNIQUE_LOCK lock(lock_);
 
-    while(execute_end_size_ > 0) {
+    while(finish_end_size < end_size_) {
         cv_.wait(lock);
     }
 }
@@ -112,8 +112,9 @@ CVoid GDynamicEngine::wait() {
 
 CVoid GDynamicEngine::decreaseEnd() {
     CGRAPH_UNIQUE_LOCK lock(lock_);
-    --execute_end_size_;
-    if (execute_end_size_ <= 0) {
+    ++finish_end_size;
+    if (finish_end_size >= end_size_) {
+        finish_end_size = end_size_;
         cv_.notify_one();
     }
 }
