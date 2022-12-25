@@ -27,9 +27,8 @@ public:
             CGRAPH_PARAM_READ_CODE_BLOCK(myParam)
             val = myParam->iValue;
         }
-        // if (val >= 1199990 || val % 10000 == 0) {
-            printf("[%s], iValue is : [%d] ... \n", this->getName().c_str(), val);
-        // }
+        CGraph::CGRAPH_ECHO("[%s], iValue is : [%d] ... ", this->getName().c_str(), val);
+
         return CStatus();
     }
 };

@@ -44,9 +44,7 @@ public:
         }
 
         /* 执行时，仅依赖val值，跟当前param1->iValue值无关，可以放到 CODE_BLOCK 外部 */
-        // if (cnt >= 1599990 || cnt % 10000 == 0) {
-            printf("[%s], iValue value is : [%d], iCount value is [%d] ... \n", this->getName().c_str(), val, cnt);
-        // }
+        CGraph::CGRAPH_ECHO("[%s], iValue value is : [%d], iCount value is [%d] ... ", this->getName().c_str(), val, cnt);
 
         return CStatus();
     }
