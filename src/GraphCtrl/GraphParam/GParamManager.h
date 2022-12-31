@@ -39,6 +39,15 @@ public:
     template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
     T* get(const std::string& key);
 
+    /**
+     * 获取一个特定类型的参数，如果为空的话，则抛出异常信息
+     * @tparam T
+     * @param key
+     * @return
+     */
+    template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
+    T* getWithNoEmpty(const std::string& key);
+
 
 protected:
     explicit GParamManager();
@@ -61,7 +70,6 @@ protected:
 private:
     std::unordered_map<std::string, GParamPtr> params_map_;           // 记录param信息的hash表
     std::mutex lock_;                                                 // 创建param的时候上锁
-    CBool is_init_ { false };                                         // 标记是否初始化结束
 
     friend class GPipeline;
     friend class UAllocator;

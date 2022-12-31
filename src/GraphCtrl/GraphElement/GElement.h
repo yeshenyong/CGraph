@@ -45,6 +45,16 @@ public:
     T* getGParam(const std::string& key);
 
     /**
+     * 获取参数信息，如果未找到，则返回nullptr
+     * @tparam T
+     * @param key
+     * @return
+     */
+    template<typename T,
+            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
+    T* getGParamWithNoEmpty(const std::string& key);
+
+    /**
      * 创建param信息，如果创建成功，则直接返回ok
      * @tparam T
      * @param key
@@ -74,7 +84,7 @@ public:
      */
     template<typename TAspect, typename ...Args,
             std::enable_if_t<std::is_base_of<GTemplateAspect<Args...>, TAspect>::value, int> = 0>
-    GElement* addGAspect(Args&&... args);
+    GElement* addGAspect(Args... args);
 
     /**
      * 添加当前element内部参数
