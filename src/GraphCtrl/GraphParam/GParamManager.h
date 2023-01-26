@@ -27,7 +27,7 @@ public:
      * @param key
      * @return
      */
-    template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
+    template<typename T, c_enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
     CStatus create(const std::string& key);
 
     /**
@@ -36,18 +36,15 @@ public:
      * @param key
      * @return
      */
-    template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
+    template<typename T, c_enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
     T* get(const std::string& key);
 
     /**
-     * 获取一个特定类型的参数，如果为空的话，则抛出异常信息
-     * @tparam T
+     * 删除特定的param信息
      * @param key
      * @return
      */
-    template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    T* getWithNoEmpty(const std::string& key);
-
+    CStatus remove(const std::string& key);
 
 protected:
     explicit GParamManager();

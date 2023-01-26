@@ -15,6 +15,7 @@ GPipeline::GPipeline() {
     element_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementManager)
     param_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GParamManager)
     daemon_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GDaemonManager)
+    event_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GEventManager)
     is_init_ = false;
 }
 
@@ -23,6 +24,7 @@ GPipeline::~GPipeline() {
     CGRAPH_DELETE_PTR(daemon_manager_)
     CGRAPH_DELETE_PTR(element_manager_)
     CGRAPH_DELETE_PTR(param_manager_)
+    CGRAPH_DELETE_PTR(event_manager_)
 
     // 结束的时候，清空所有创建的节点信息。所有节点信息，仅在这一处释放
     for (GElementPtr element : element_repository_) {
@@ -33,12 +35,15 @@ GPipeline::~GPipeline() {
 
 CStatus GPipeline::init() {
     CGRAPH_FUNCTION_BEGIN
+    CGRAPH_ASSERT_INIT(false)    // 必须是非初始化的状态下，才可以初始化。反之同理
     CGRAPH_ASSERT_NOT_NULL(thread_pool_)
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
     CGRAPH_ASSERT_NOT_NULL(param_manager_)
     CGRAPH_ASSERT_NOT_NULL(daemon_manager_)
+    CGRAPH_ASSERT_NOT_NULL(event_manager_)
 
     status += param_manager_->init();
+    status += event_manager_->init();
     status += element_manager_->init();
     status += daemon_manager_->init();    // daemon的初始化，需要晚于所有element的初始化
     CGRAPH_FUNCTION_CHECK_STATUS
@@ -50,7 +55,6 @@ CStatus GPipeline::init() {
 
 CStatus GPipeline::run() {
     CGRAPH_FUNCTION_BEGIN
-
     CGRAPH_ASSERT_INIT(true)
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
     CGRAPH_ASSERT_NOT_NULL(param_manager_)
@@ -66,13 +70,19 @@ CStatus GPipeline::run() {
 CStatus GPipeline::destroy() {
     CGRAPH_FUNCTION_BEGIN
 
+    CGRAPH_ASSERT_INIT(true)
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
     CGRAPH_ASSERT_NOT_NULL(param_manager_)
     CGRAPH_ASSERT_NOT_NULL(daemon_manager_)
+    CGRAPH_ASSERT_NOT_NULL(event_manager_)
 
+    status += event_manager_->destroy();
     status += daemon_manager_->destroy();
     status += element_manager_->destroy();
     status += param_manager_->destroy();
+    CGRAPH_FUNCTION_CHECK_STATUS
+
+    is_init_ = false;
     CGRAPH_FUNCTION_END
 }
 

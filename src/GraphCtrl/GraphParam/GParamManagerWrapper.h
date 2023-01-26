@@ -16,66 +16,69 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
-class GParamManagerWrapper : public GParamObject {
-protected:
+#define CGRAPH_DECLARE_GPARAM_MANAGER_WRAPPER                                            \
     /**
-     * 设置统一的参数管理类
+     * 创建param信息，如果创建成功，则直接返回ok
+     * @tparam TGParam
+     * @param key
+     * @return
+     */                                                                                  \
+    template<typename TGParam,                                                           \
+             c_enable_if_t<std::is_base_of<GParam, TGParam>::value, int> = 0>            \
+    CStatus createGParam(const std::string& key) {                                       \
+        CGRAPH_ASSERT_NOT_NULL(param_manager_)                                           \
+        return param_manager_->create<TGParam>(key);                                     \
+    }                                                                                    \
+                                                                                         \
+    /**
+     * 获取参数信息，如果未找到，则返回nullptr
+     * @tparam TGParam
+     * @param key
+     * @return
+     */                                                                                 \
+    template<typename TGParam,                                                          \
+             c_enable_if_t<std::is_base_of<GParam, TGParam>::value, int> = 0>           \
+    TGParam* getGParam(const std::string& key) {                                        \
+        CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(param_manager_)                              \
+        return param_manager_->get<TGParam>(key);                                       \
+    }                                                                                   \
+                                                                                        \
+    /**
+     * 获取参数信息，如果未找到，则返回nullptr
+     * @tparam TGParam
+     * @param key
+     * @return
+     */                                                                                 \
+    template<typename TGParam,                                                          \
+             c_enable_if_t<std::is_base_of<GParam, TGParam>::value, int> = 0>           \
+    TGParam* getGParamWithNoEmpty(const std::string& key) {                             \
+        auto* param = getGParam<TGParam>(key);                                          \
+        if (nullptr == param) {                                                         \
+            CGRAPH_THROW_EXCEPTION("param [" + key + "] is null")                       \
+        }                                                                               \
+        return param;                                                                   \
+    }                                                                                   \
+                                                                                        \
+    /**
+     * 删除param信息
+     * @param key
+     * @return
+     */                                                                                 \
+    CStatus removeGParam(const std::string& key) {                                      \
+        CGRAPH_ASSERT_NOT_NULL(param_manager_)                                          \
+        return param_manager_->remove(key);                                             \
+    }                                                                                   \
+                                                                                        \
+    /**
+     * 设置统一管控参数类
      * @param pm
      * @return
-     */
-    GParamManagerWrapper* setGParamManager(const GParamManagerPtr pm) {
-        param_manager_ = pm;
-        return this;
-    }
-
-    /**
-     * 创建参数信息
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    CStatus createGParam(const std::string& key) {
-        CGRAPH_ASSERT_NOT_NULL(param_manager_)
-        return param_manager_->create<T>(key);
-    }
-
-    /**
-     * 获取参数信息
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    T* getGParam(const std::string& key) {
-        CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(param_manager_)
-        return param_manager_->get<T>(key);
-    }
-
-    /**
-     * 获取参数信息，未获得的情况下，抛出异常
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    T* getGParamWithNoEmpty(const std::string& key) {
-        auto* param = param_manager_->get<T>(key);
-        if (nullptr == param) {
-            CGRAPH_THROW_EXCEPTION("param [" + key + "] is null")
-        }
-        return param;
-    }
-
-
-private:
-    GParamManagerPtr param_manager_ = nullptr;    // GParam管理类，必须在pipeline一层创建和销毁。
-
-    friend class GElement;
-};
+     */                                                                                 \
+    void* setGParamManager(GParamManagerPtr pm) {                                       \
+        this->param_manager_ = pm;                                                      \
+        return this;                                                                    \
+    }                                                                                   \
+                                                                                        \
 
 CGRAPH_NAMESPACE_END
 

@@ -61,7 +61,7 @@ CStatus UThreadPool::init() {
         status += ptr->init();
 
         // 记录线程和匹配id信息
-        thread_record_map_.insert(std::pair<CSize, int>((CSize)std::hash<std::thread::id>{}(ptr->thread_.get_id()), i));
+        thread_record_map_[(CSize)std::hash<std::thread::id>{}(ptr->thread_.get_id())] = i;
         primary_threads_.emplace_back(ptr);
     }
     CGRAPH_FUNCTION_CHECK_STATUS
@@ -116,8 +116,8 @@ CStatus UThreadPool::submit(CGRAPH_DEFAULT_CONST_FUNCTION_REF func, CMSec ttl,
 }
 
 
-int UThreadPool::getThreadNum(CSize tid) {
-    int threadNum = -1;
+CIndex UThreadPool::getThreadNum(CSize tid) {
+    int threadNum = CGRAPH_SECONDARY_THREAD_COMMON_ID;
     auto result = thread_record_map_.find(tid);
     if (result != thread_record_map_.end()) {
         threadNum = result->second;

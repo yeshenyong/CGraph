@@ -1,7 +1,7 @@
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com
-@File: Graphic.h
+@File: GPipeline.h
 @Time: 2021/6/2 10:15 下午
 @Desc: 
 ***************************/
@@ -13,12 +13,14 @@
 #include <memory>
 #include <list>
 
+#include "GPipelineObject.h"
 #include "../GraphElement/GElementInclude.h"
 #include "../GraphDaemon/GDaemonInclude.h"
+#include "../GraphEvent/GEventInclude.h"
 
 CGRAPH_NAMESPACE_BEGIN
 
-class GPipeline : public GraphObject {
+class GPipeline : public GPipelineObject {
 public:
     /**
      * 初始化pipeline信息
@@ -53,7 +55,7 @@ public:
      * @return
      */
     template<typename T, CLevel level = CGRAPH_DEFAULT_ELEMENT_LEVEL,
-            std::enable_if_t<std::is_base_of<GNode, T>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GNode, T>::value, int> = 0>
     GNodePtr createGNode(const GNodeInfo &info);
 
     /**
@@ -67,7 +69,7 @@ public:
      * @return
      */
     template<typename T, CLevel level = CGRAPH_DEFAULT_ELEMENT_LEVEL,
-            std::enable_if_t<std::is_base_of<GGroup, T>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GGroup, T>::value, int> = 0>
     GGroupPtr createGGroup(const GElementPtrArr &elements,
                            const GElementPtrSet &dependElements = std::initializer_list<GElementPtr>(),
                            const std::string &name = CGRAPH_EMPTY,
@@ -86,7 +88,7 @@ public:
      * @return
      */
     template<typename T, CLevel level = CGRAPH_DEFAULT_ELEMENT_LEVEL,
-            std::enable_if_t<std::is_base_of<GElement, T>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GElement, T>::value, int> = 0>
     CStatus registerGElement(GElementPtr *elementRef,
                              const GElementPtrSet &dependElements = std::initializer_list<GElementPtr>(),
                              const std::string &name = CGRAPH_EMPTY,
@@ -117,43 +119,37 @@ public:
      * @return
      */
     template<typename TNode, typename ...Args,
-            std::enable_if_t<std::is_base_of<GTemplateNode<Args ...>, TNode>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GTemplateNode<Args ...>, TNode>::value, int> = 0>
     CStatus registerGElement(GTemplateNodePtr<Args ...> *elementRef,
                              const GElementPtrSet &dependElements = std::initializer_list<GElementPtr>(),
                              Args... args);
 
     /**
-     * 添加参数，pipeline中所有节点共享此参数
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T, std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    CStatus createGParam(const std::string& key);
-
-    /**
      * 添加切面
-     * @tparam T
+     * @tparam TAspect
+     * @tparam TParam
      * @param elements
+     * @param param
      * @return
      */
     template<typename TAspect, typename TParam = GAspectDefaultParam,
-            std::enable_if_t<std::is_base_of<GAspect, TAspect>::value, int> = 0,
-            std::enable_if_t<std::is_base_of<GAspectParam, TParam>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GAspect, TAspect>::value, int> = 0,
+            c_enable_if_t<std::is_base_of<GAspectParam, TParam>::value, int> = 0>
     GPipeline* addGAspect(const GElementPtrSet& elements = std::initializer_list<GElementPtr>(),
                           TParam* param = nullptr);
 
     /**
      * 添加守护
-     * @tparam T
-     * @param ms 设置定时间隔信息，单位是ms
-     * @param param 传入参数信息
+     * @tparam TDaemon
+     * @tparam TParam
+     * @param ms
+     * @param param
      * @return
      */
-    template<typename TDaemon, typename DParam = GDaemonDefaultParam,
-            std::enable_if_t<std::is_base_of<GDaemon, TDaemon>::value, int> = 0,
-            std::enable_if_t<std::is_base_of<GDaemonParam, DParam>::value, int> = 0>
-    GPipeline* addGDaemon(CMSec ms, DParam* param = nullptr);
+    template<typename TDaemon, typename TParam = GDaemonDefaultParam,
+            c_enable_if_t<std::is_base_of<GDaemon, TDaemon>::value, int> = 0,
+            c_enable_if_t<std::is_base_of<GDaemonParam, TParam>::value, int> = 0>
+    GPipeline* addGDaemon(CMSec ms, TParam* param = nullptr);
 
     /**
      * 添加模板类型守护
@@ -164,8 +160,21 @@ public:
      * @return
      */
     template<typename TDaemon, typename ...Args,
-            std::enable_if_t<std::is_base_of<GTemplateDaemon<Args...>, TDaemon>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GTemplateDaemon<Args...>, TDaemon>::value, int> = 0>
     GPipeline* addGDaemon(CMSec ms, Args... args);
+
+    /**
+     * 添加一个事件
+     * @tparam TEvent
+     * @tparam TParam
+     * @param key
+     * @param param
+     * @return
+     */
+    template<typename TEvent, typename TParam = GEventDefaultParam,
+            c_enable_if_t<std::is_base_of<GEvent, TEvent>::value, int> = 0,
+            c_enable_if_t<std::is_base_of<GEventParam, TParam>::value, int> = 0>
+    GPipeline* addGEvent(const std::string& key, TParam* param = nullptr);
 
     /**
      * 设置执行的最大时间周期，单位为毫秒
@@ -182,6 +191,12 @@ public:
      */
     GPipeline* setGEngineType(GEngineType type);
 
+    /**
+     * 注册GParam 交互类集合
+     * @return
+     */
+    CGRAPH_DECLARE_GPARAM_MANAGER_WRAPPER
+
 protected:
     explicit GPipeline();
     ~GPipeline() override;
@@ -190,12 +205,12 @@ protected:
     CGRAPH_NO_ALLOWED_COPY(GPipeline)
 
 private:
-    CBOOL is_init_ = false;                                     // 初始化标志位
-    GElementManagerPtr element_manager_;                        // 节点管理类（管理所有注册过的element信息）
+    GElementManagerPtr element_manager_ = nullptr;              // 节点管理类（管理所有注册过的element信息）
+    GParamManagerPtr param_manager_ = nullptr;                  // 参数管理类
+    GDaemonManagerPtr daemon_manager_ = nullptr;                // 守护管理类
+    GEventManagerPtr event_manager_ = nullptr;                  // 事件管理类
+    UThreadPoolPtr thread_pool_ = nullptr;                      // 线程池类
     GElementPtrSet element_repository_;                         // 标记创建的所有节点，最终释放使用
-    GParamManagerPtr param_manager_;                            // 参数管理类
-    UThreadPoolPtr thread_pool_;                                // 线程池类
-    GDaemonManagerPtr daemon_manager_;                          // 守护管理类
 
     friend class GPipelineFactory;
     friend class UAllocator;

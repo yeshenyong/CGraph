@@ -122,12 +122,14 @@ CStatus GElement::setElementInfo(const GElementPtrSet& dependElements,
                                  const std::string& name,
                                  CSize loop,
                                  CLevel level,
-                                 GParamManagerPtr paramManager) {
+                                 GParamManagerPtr paramManager,
+                                 GEventManagerPtr eventManager) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT(false)
 
     this->setName(name)->setLoop(loop)->setLevel(level);
     param_manager_ = paramManager;
+    event_manager_ = eventManager;
     status = this->addDependGElements(dependElements);
     CGRAPH_FUNCTION_END
 }
@@ -186,7 +188,10 @@ CStatus GElement::fatProcessor(const CFunctionType& type) {
                 CGRAPH_RETURN_ERROR_STATUS("get function type error")
         }
     } catch (const CException& ex) {
+        status = doAspect(GAspectType::BEGIN_CRASH);
+        CGRAPH_FUNCTION_CHECK_STATUS
         status = crashed(ex);
+        doAspect(GAspectType::FINISH_CRASH, status);
     }
 
     CGRAPH_FUNCTION_END
@@ -211,13 +216,27 @@ CStatus GElement::crashed(const CException& ex) {
 }
 
 
-int GElement::getThreadNum() {
+CIndex GElement::getThreadNum() {
     if (nullptr == thread_pool_) {
-        return -1;    // 理论不存在的情况
+        return CGRAPH_SECONDARY_THREAD_COMMON_ID;    // 理论不存在的情况
     }
 
     auto tid = (CSize)std::hash<std::thread::id>{}(std::this_thread::get_id());
     return thread_pool_->getThreadNum(tid);
+}
+
+
+CStatus GElement::notify(const std::string& key, CSize times) {
+    CGRAPH_FUNCTION_BEGIN
+    CGRAPH_ASSERT_NOT_NULL(event_manager_)
+    CGRAPH_ASSERT_INIT(true)
+
+    for (CSize i = 0; i < times; i++) {
+        status = event_manager_->trigger(key);
+        CGRAPH_FUNCTION_CHECK_STATUS
+    }
+
+    CGRAPH_FUNCTION_END
 }
 
 CGRAPH_NAMESPACE_END

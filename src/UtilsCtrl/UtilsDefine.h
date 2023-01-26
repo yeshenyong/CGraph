@@ -46,7 +46,7 @@ CGRAPH_NAMESPACE_BEGIN
 /* 判断函数流程是否可以继续 */
 static std::mutex g_check_status_mtx;
 #define CGRAPH_FUNCTION_CHECK_STATUS                                                         \
-    if (unlikely(!status.isOK())) {                                                          \
+    if (unlikely(status.isErr())) {                                                          \
         std::lock_guard<std::mutex> lock{ g_check_status_mtx };                              \
         CGRAPH_ECHO("%s | %s | line = [%d], errorCode = [%d], errorInfo = [%s].",            \
             __FILE__, __FUNCTION__, __LINE__, status.getCode(), status.getInfo().c_str());   \
@@ -69,6 +69,10 @@ static std::mutex g_check_status_mtx;
     if (unlikely((isInit) != is_init_)) {                     \
         return nullptr;                                       \
     }                                                         \
+
+#define CGRAPH_CHECK_STATUS_RETURN_THIS_OR_NULL               \
+    return status.isOK() ? this : nullptr;                    \
+
 
 #define CGRAPH_SLEEP_MILLISECOND(ms)                                            \
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));                 \

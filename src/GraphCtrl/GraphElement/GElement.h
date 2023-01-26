@@ -17,8 +17,6 @@
 
 #include "GElementDefine.h"
 #include "GElementObject.h"
-#include "../GraphParam/GParamInclude.h"
-#include "../GraphAspect/GAspectInclude.h"
 
 CGRAPH_NAMESPACE_BEGIN
 
@@ -35,36 +33,6 @@ public:
     const std::string& getSession() const;
 
     /**
-     * 获取参数信息，如果未找到，则返回nullptr
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    T* getGParam(const std::string& key);
-
-    /**
-     * 获取参数信息，如果未找到，则返回nullptr
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    T* getGParamWithNoEmpty(const std::string& key);
-
-    /**
-     * 创建param信息，如果创建成功，则直接返回ok
-     * @tparam T
-     * @param key
-     * @return
-     */
-    template<typename T,
-            std::enable_if_t<std::is_base_of<GParam, T>::value, int> = 0>
-    CStatus createGParam(const std::string& key);
-
-    /**
      * 实现添加切面的逻辑
      * @tparam TAspect
      * @tparam TParam
@@ -72,8 +40,8 @@ public:
      * @return
      */
     template<typename TAspect, typename TParam = GAspectDefaultParam,
-            std::enable_if_t<std::is_base_of<GAspect, TAspect>::value, int> = 0,
-            std::enable_if_t<std::is_base_of<GAspectParam, TParam>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GAspect, TAspect>::value, int> = 0,
+            c_enable_if_t<std::is_base_of<GAspectParam, TParam>::value, int> = 0>
     GElement* addGAspect(TParam* param = nullptr);
 
     /**
@@ -83,7 +51,7 @@ public:
      * @return
      */
     template<typename TAspect, typename ...Args,
-            std::enable_if_t<std::is_base_of<GTemplateAspect<Args...>, TAspect>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GTemplateAspect<Args...>, TAspect>::value, int> = 0>
     GElement* addGAspect(Args... args);
 
     /**
@@ -94,7 +62,7 @@ public:
      * @return
      */
     template<typename T,
-            std::enable_if_t<std::is_base_of<GElementParam, T>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GElementParam, T>::value, int> = 0>
     GElement* addEParam(const std::string& key, T* param);
 
     /**
@@ -200,13 +168,15 @@ protected:
      * @param loop
      * @param level
      * @param paramManager
+     * @paarm eventManager
      * @return
      */
     virtual CStatus setElementInfo(const std::set<GElement *> &dependElements,
                                    const std::string &name,
                                    CSize loop,
                                    CLevel level,
-                                   GParamManagerPtr paramManager);
+                                   GParamManagerPtr paramManager,
+                                   GEventManagerPtr eventManager);
 
     /**
      * 获取当前element内部参数
@@ -215,7 +185,7 @@ protected:
      * @return
      */
     template<typename T,
-            std::enable_if_t<std::is_base_of<GElementParam, T>::value, int> = 0>
+            c_enable_if_t<std::is_base_of<GElementParam, T>::value, int> = 0>
     T* getEParam(const std::string& key);
 
     /**
@@ -230,13 +200,23 @@ protected:
      * @return
      * @notice 辅助线程返回-1
      */
-    int getThreadNum();
+    CIndex getThreadNum();
+
+    /**
+     * 触发一个事件
+     * @param key
+     * @param times
+     * @return
+     * @notice 返回值仅表示是否触发成功，不表示事件是否执行成功
+     */
+    CStatus notify(const std::string& key, CSize times = 1);
 
     CGRAPH_NO_ALLOWED_COPY(GElement);
 
+    CGRAPH_DECLARE_GPARAM_MANAGER_WRAPPER
+
 protected:
     CBool done_ { false };                           // 判定被执行结束
-    CBool is_init_ { false };                        // 是否初始化了
     CBool linkable_ { false };                       // 判定是否可以连通计算
     CSize loop_ { 1 };                               // 节点执行次数
     CLevel level_ { 0 };                             // 用于设定init的执行顺序(值小的，优先init，可以为负数)
@@ -247,6 +227,7 @@ protected:
     std::atomic<CSize> left_depend_ { 0 };        // 当 left_depend_ 值为0的时候，即可以执行该node信息
     GParamManagerPtr param_manager_ { nullptr };     // 整体流程的参数管理类，所有pipeline中的所有节点共享
     GAspectManagerPtr aspect_manager_ { nullptr };   // 整体流程的切面管理类
+    GEventManagerPtr event_manager_ { nullptr };     // 事件管理类
     UThreadPoolPtr thread_pool_ { nullptr };         // 用于执行的线程池信息
     GElementParamMap local_params_;                  // 用于记录当前element的内部参数
 

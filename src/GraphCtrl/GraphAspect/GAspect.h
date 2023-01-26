@@ -15,8 +15,7 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
-class GAspect : public GAspectObject,
-                public GParamManagerWrapper {
+class GAspect : public GAspectObject {
 public:
     /**
      * init()函数切面开始期间动作
@@ -56,6 +55,19 @@ public:
      * @param curStatus
      */
     virtual CVoid finishDestroy(const CStatus& curStatus) {}
+
+    /**
+     * crash()函数切面开始期间动作
+     */
+    virtual CStatus beginCrash() {
+        CGRAPH_EMPTY_FUNCTION
+    }
+
+    /**
+     * crash()函数切面结束期间动作
+     * @param curStatus
+     */
+    virtual CVoid finishCrash(const CStatus& curStatus) {}
 };
 
 using GAspectPtr = GAspect *;
