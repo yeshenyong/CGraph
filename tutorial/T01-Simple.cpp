@@ -1,3 +1,11 @@
+/*
+ * @Author: 1050575224@qq.com 1050575224@qq.com
+ * @Date: 2023-01-30 13:07:27
+ * @LastEditors: 1050575224@qq.com 1050575224@qq.com
+ * @LastEditTime: 2023-01-30 17:25:38
+ * @FilePath: /CGraph/tutorial/T01-Simple.cpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com
@@ -16,7 +24,7 @@ void tutorial_simple() {
     GPipelinePtr pipeline = GPipelineFactory::create();
 
     /* 定义GElementPtr类型的变量 */
-    GElementPtr a, b, c, d = nullptr;
+    GElementPtr a, b, c, d, e = nullptr;
 
     /**
      * 注册节点，其中MyNode1和MyNode2必须为GNode的子类，否则无法通过编译。
@@ -26,13 +34,15 @@ void tutorial_simple() {
     status += pipeline->registerGElement<MyNode2>(&b, {a}, "nodeB");    // 将名为nodeB，依赖a执行的node信息，注册入pipeline中
     status += pipeline->registerGElement<MyNode1>(&c, {a}, "nodeC");
     status += pipeline->registerGElement<MyNode2>(&d, {b, c}, "nodeD");    // 将名为nodeD，依赖{b,c}执行的node信息，注册入pipeline中
+    status += pipeline->registerGElement<MyNode2>(&e, {a}, "nodeE");    // 将名为nodeD，依赖{b,c}执行的node信息，注册入pipeline中
+    
     if (!status.isOK()) {
         return;    // 使用时，请对所有CGraph接口的返回值做判定。今后tutorial例子中省略该操作。
     }
 
     /* 图信息初始化，准备开始计算 */
     status += pipeline->init();
-
+    std::cout << pipeline->dump() << std::endl;
     /* 运行流图信息。初始化后，支持多次循环计算 */
     for (int i = 0; i < 3; i++) {
         status += pipeline->run();

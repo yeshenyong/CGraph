@@ -102,6 +102,84 @@ CStatus GPipeline::process(CSize runTimes) {
 }
 
 
+std::string GPipeline::dump() const {
+    // todo
+    // CGRAPH_ASSERT_INIT(false)
+    std::ostringstream oss;
+
+    _dump(oss);
+    // std::cout << oss.str() << std::endl;
+    return oss.str();
+}
+
+
+CVoid GPipeline::_dump(std::ostream& oss) const {
+    oss << "digraph CGraph {\n";
+
+    dumpGraph(oss);
+
+    oss << "}\n";
+}
+
+
+CVoid GPipeline::dumpGraph(std::ostream& oss) const {
+    for (const auto& node : element_repository_) {
+        // todo 区分
+        if (node) {
+            // 针对不同Node 做区分
+            dumpNode(node, oss);
+        }
+    }
+}
+
+
+CVoid GPipeline::dumpNode(GElementPtr element, std::ostream& oss) const {
+    oss << 'p' << element << "[label=\"";
+    std::stringstream name;
+    std::string nameStr = "";
+    if (element->getName().empty()) {
+        oss << 'p' << element;
+        name << 'p' << element;
+    } else {
+        oss << element->getName();
+        name << element->getName();
+    }
+    nameStr = name.str();
+    oss << "\" ";
+
+    if (typeid(*element) == typeid(GCluster) || typeid(*element) == typeid(GGroup)) {
+        oss << "shape=\"record\""
+            << "color=\"red\"";
+    }
+    oss << "];\n";
+    if (typeid(*element) == typeid(GCluster) || typeid(*element) == typeid(GGroup)) {
+        oss << "subgraph ";
+        oss << nameStr;
+        oss << " {\nlabel=\"";
+        oss << nameStr;
+        oss << "\";\n";
+        size_t idx = 0;
+        GElementPtr pre = nullptr;
+        GClusterPtr cluster = dynamic_cast<GClusterPtr>(element);
+        for (const auto& node : cluster->group_elements_arr_) {
+            if (0 != idx) {
+                oss << 'p' << pre << " -> p" << node << ";\n";
+            }
+            idx++;
+            pre = node;
+        }
+        oss << "}\n";
+    }
+
+    for (const auto& node : element->run_before_) {
+        oss << 'p' << element << " -> p" << node << ";\n";
+    }
+    if (element->loop_ > 1) {
+        oss << 'p' << element << " -> p" << element << "[label=\"" << element->loop_ << "\"]" << ";\n";
+    }
+}
+
+
 GPipelinePtr GPipeline::setGElementRunTtl(CMSec ttl) {
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
     CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(element_manager_)

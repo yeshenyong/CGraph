@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 #include <list>
+#include <sstream>
 
 #include "GPipelineObject.h"
 #include "../GraphElement/GElementInclude.h"
@@ -46,6 +47,18 @@ public:
      * @return
      */
     CStatus process(CSize runTimes = CGRAPH_DEFAULT_LOOP_TIMES);
+
+    /**
+     * pipeline 信息 graphviz
+     * @param
+     * @return
+    */
+    std::string dump() const;
+    CVoid dump(std::ostringstream& oss) const;
+    CVoid _dump(std::ostream& oss) const;
+    CVoid dumpGraph(std::ostream& oss) const;
+    CVoid dumpNode(GElementPtr element, std::ostream& oss) const;
+    
 
     /**
      * 根据传入的info信息，创建node节点
