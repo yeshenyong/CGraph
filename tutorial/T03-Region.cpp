@@ -34,7 +34,10 @@ void tutorial_region() {
         return;
     }
 
-    status = pipeline->process();
+    // status = pipeline->process();
+    status = pipeline->init();
+
+    std::cout << pipeline->dump() << std::endl;
     CGRAPH_ECHO("pipeline process status is : [%d]", status.getCode());
 
     GPipelineFactory::remove(pipeline);

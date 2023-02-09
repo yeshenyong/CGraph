@@ -53,12 +53,17 @@ public:
      * @param
      * @return
     */
-    std::string dump() const;
-    CVoid dump(std::ostringstream& oss) const;
-    CVoid _dump(std::ostream& oss) const;
-    CVoid dumpGraph(std::ostream& oss) const;
-    CVoid dumpNode(GElementPtr element, std::ostream& oss) const;
-    
+    std::string dump();
+    CVoid dump(std::ostringstream& oss);
+    CVoid _dump(std::ostream& oss);
+    CVoid dumpGraph(std::ostream& oss);
+    CVoid dumpNode(GElementPtr element, std::ostream& oss);
+    CVoid dumpGroup(GElementPtr element, std::ostream& oss);
+    CBool isGroup(GElementPtr element) const;
+    CBool isRegion(GElementPtr element) const;
+    CBool isCluster(GElementPtr element) const;
+    GElementPtrSet preproessorNode(GElementPtrSet elementSet);
+
 
     /**
      * 根据传入的info信息，创建node节点

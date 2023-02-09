@@ -102,7 +102,7 @@ CStatus GPipeline::process(CSize runTimes) {
 }
 
 
-std::string GPipeline::dump() const {
+std::string GPipeline::dump() {
     // todo
     // CGRAPH_ASSERT_INIT(false)
     std::ostringstream oss;
@@ -113,8 +113,10 @@ std::string GPipeline::dump() const {
 }
 
 
-CVoid GPipeline::_dump(std::ostream& oss) const {
+CVoid GPipeline::_dump(std::ostream& oss) {
     oss << "digraph CGraph {\n";
+
+    oss << "compound=true;\n";
 
     dumpGraph(oss);
 
@@ -122,8 +124,10 @@ CVoid GPipeline::_dump(std::ostream& oss) const {
 }
 
 
-CVoid GPipeline::dumpGraph(std::ostream& oss) const {
-    for (const auto& node : element_repository_) {
+CVoid GPipeline::dumpGraph(std::ostream& oss) {
+    /* 预处理: 删除cluster 内的node */
+    auto element_dump = preproessorNode(element_repository_);
+    for (const auto& node : element_dump) {
         // todo 区分
         if (node) {
             // 针对不同Node 做区分
@@ -133,50 +137,162 @@ CVoid GPipeline::dumpGraph(std::ostream& oss) const {
 }
 
 
-CVoid GPipeline::dumpNode(GElementPtr element, std::ostream& oss) const {
+CVoid GPipeline::dumpNode(GElementPtr element, std::ostream& oss) {
     oss << 'p' << element << "[label=\"";
     std::stringstream name;
     std::string nameStr = "";
     if (element->getName().empty()) {
-        oss << 'p' << element;
+        // oss << 'p' << element;
         name << 'p' << element;
     } else {
-        oss << element->getName();
+        // oss << element->getName();
         name << element->getName();
     }
     nameStr = name.str();
-    oss << "\" ";
+    element->setName(nameStr);
 
-    if (typeid(*element) == typeid(GCluster) || typeid(*element) == typeid(GGroup)) {
+    printf("before rename = %s\n", element->getName().c_str());
+    std::cout << "typeid(GElement) = " << typeid(*element).name() << std::endl;
+    std::cout << "typeid(GRegion) = " << typeid(GRegion).name() << std::endl;
+    std::cout << "typeid(GGroup) = " << typeid(GGroup).name() << std::endl;
+    std::cout << "typeid(GCluster) = " << typeid(GCluster).name() << std::endl;
+
+    if (isGroup(element)) {
+        element->setName("cluster_" + element->getName());
+    }
+
+    oss << element->getName();
+    oss << "\" ";
+    printf("after rename = %s\n", element->getName().c_str());
+
+    if (isGroup(element)) {
         oss << "shape=\"record\""
             << "color=\"red\"";
     }
     oss << "];\n";
-    if (typeid(*element) == typeid(GCluster) || typeid(*element) == typeid(GGroup)) {
-        oss << "subgraph ";
-        oss << nameStr;
-        oss << " {\nlabel=\"";
-        oss << nameStr;
-        oss << "\";\n";
-        size_t idx = 0;
-        GElementPtr pre = nullptr;
-        GClusterPtr cluster = dynamic_cast<GClusterPtr>(element);
-        for (const auto& node : cluster->group_elements_arr_) {
-            if (0 != idx) {
-                oss << 'p' << pre << " -> p" << node << ";\n";
-            }
-            idx++;
-            pre = node;
-        }
-        oss << "}\n";
+    if (isGroup(element)) {
+        dumpGroup(element, oss);
     }
 
     for (const auto& node : element->run_before_) {
-        oss << 'p' << element << " -> p" << node << ";\n";
+        if (isGroup(element) && isGroup(node)) {
+            oss << 'p' << element << " -> p" << node << "[ltail=" << element->getName() << " lhead=" << node->getName() << "];\n";
+        } else if (isGroup(element) && !isGroup(node)) {
+            oss << 'p' << element << " -> p" << node << "[ltail=" << element->getName() << "];\n";
+        } else if (!isGroup(element) && isGroup(node)) {
+            oss << 'p' << element << " -> p" << node << "[lhead=" << node->getName() << "];\n";
+        } else {
+            oss << 'p' << element << " -> p" << node << ";\n";
+        }
     }
     if (element->loop_ > 1) {
         oss << 'p' << element << " -> p" << element << "[label=\"" << element->loop_ << "\"]" << ";\n";
     }
+}
+
+
+CVoid GPipeline::dumpGroup(GElementPtr element, std::ostream& oss) {
+    /* cluster node 可见 */
+    oss << "subgraph ";
+    oss << element->getName();
+    oss << " {\nlabel=\"";
+    oss << element->getName();
+    oss << "\";\n";
+    oss << 'p' << element << "[label=\"" << element->getName() << "\" shape=point height=0 " << "];\n";
+    oss << "color=blue;\n";
+    size_t idx = 0;
+    GElementPtr pre = nullptr;
+    std::vector<GElementPtr> groupElement;
+    if (isRegion(element)) {
+        GRegionPtr region = dynamic_cast<GRegionPtr>(element);
+        groupElement.insert(groupElement.end(), region->manager_->manager_elements_.begin(), region->manager_->manager_elements_.end());
+    } else if (isCluster(element)) {
+        GClusterPtr cluster = dynamic_cast<GClusterPtr>(element);
+        groupElement.insert(groupElement.end(), cluster->group_elements_arr_.begin(), cluster->group_elements_arr_.end());
+    }
+    for (const auto& node : groupElement) {
+        if (isGroup(node)) {
+            dumpGroup(node, oss);
+        } else {
+            oss << 'p' << node << "[label=\"" << node->getName() << "\"];\n";
+        }
+        if (node->loop_ > 1) {
+            oss << 'p' << node << " -> p" << node << "[label=\"" << node->loop_ << "\"]" << ";\n";
+        }
+        /**
+         * 1. node to node
+         * 2. group to node
+         * 3. node to group
+         * 4. group to group
+        */
+        printf("element %s, run_before_ size = %ld\n", node->getName().c_str(), node->run_before_.size());
+        if (isRegion(element)) {
+            for (const auto& run_before : node->run_before_) {
+                if (isGroup(node) && isGroup(run_before)) {
+                    oss << 'p' << node << " -> p" << run_before << "[ltail=" << run_before->getName() << " [lhead=" << run_before->getName() << "];\n";
+                } else if (isGroup(node) && !isGroup(run_before)) {
+                    oss << 'p' << node << " -> p" << run_before << "[ltail=" << run_before->getName() << "];\n";
+                } else if (!isGroup(node) && isGroup(run_before)) {
+                    oss << 'p' << node << " -> p" << run_before << "[lhead=" << run_before->getName() << "];\n";
+                } else {
+                    oss << 'p' << node << " -> p" << run_before << ";\n";
+                }
+            }
+        } else if (isCluster(element)) {
+            if (idx != 0) {
+                if (isGroup(pre) && isGroup(node)) {
+                    oss << 'p' << pre << " -> p" << node << "[ltail=" << node->getName() << " [lhead=" << node->getName() << "];\n";
+                } else if (isGroup(pre) && !isGroup(node)) {
+                    oss << 'p' << pre << " -> p" << node << "[ltail=" << node->getName() << "];\n";
+                } else if (!isGroup(pre) && isGroup(node)) {
+                    oss << 'p' << pre << " -> p" << node << "[lhead=" << node->getName() << "];\n";
+                } else {
+                    oss << 'p' << pre << " -> p" << node << ";\n";
+                }
+            }
+        }
+        idx++;
+        pre = node;
+    }
+    oss << "}\n";
+}
+
+
+CBool GPipeline::isGroup(GElementPtr element) const {
+    return typeid(*element) == typeid(GCluster) || typeid(*element) == typeid(GGroup) || typeid(*element) == typeid(GRegion);
+}
+
+
+CBool GPipeline::isRegion(GElementPtr element) const {
+    return typeid(*element) == typeid(GRegion);
+}
+
+
+CBool GPipeline::isCluster(GElementPtr element) const {
+    return typeid(*element) == typeid(GCluster);
+}
+
+
+GElementPtrSet GPipeline::preproessorNode(GElementPtrSet elementSet) {
+    std::vector<GElementPtr> eraseElement;
+    for (const auto& element : elementSet) {
+        if (isCluster(element)) {
+            auto clusterPtr = dynamic_cast<GClusterPtr>(element);
+            eraseElement.insert(eraseElement.end(), clusterPtr->group_elements_arr_.begin(), clusterPtr->group_elements_arr_.end());
+        } else if (isRegion(element)) {
+            auto regionPtr = dynamic_cast<GRegionPtr>(element);
+            eraseElement.insert(eraseElement.end(), regionPtr->manager_->manager_elements_.begin(), regionPtr->manager_->manager_elements_.end());
+        }
+    }
+    // elementSet.erase(eraseElement.begin(), eraseElement.end());
+    for (const auto& element : eraseElement) {
+        elementSet.erase(element);
+    }
+    printf("after erase element\n");
+    for (const auto& element : elementSet) {
+        printf("element %s\n", element->getName().c_str());
+    }
+    return elementSet;
 }
 
 
