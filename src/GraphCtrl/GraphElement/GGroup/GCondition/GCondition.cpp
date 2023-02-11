@@ -2,7 +2,7 @@
  * @Author: 1050575224@qq.com 1050575224@qq.com
  * @Date: 2023-02-11 12:18:21
  * @LastEditors: 1050575224@qq.com 1050575224@qq.com
- * @LastEditTime: 2023-02-11 23:39:27
+ * @LastEditTime: 2023-02-12 00:04:08
  * @FilePath: /CGraph/src/GraphCtrl/GraphElement/GGroup/GCondition/GCondition.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -20,7 +20,7 @@ CGRAPH_NAMESPACE_BEGIN
 
 
 GCondition::GCondition() {
-    element_type_ = 0x0010 << 3;
+    element_type_ = (0x0010 << 3) | 0x0010;
 }
 
 

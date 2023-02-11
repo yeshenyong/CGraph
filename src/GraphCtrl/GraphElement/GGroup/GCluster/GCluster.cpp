@@ -11,7 +11,7 @@
 CGRAPH_NAMESPACE_BEGIN
 
 GCluster::GCluster() {
-    element_type_ = 0x0010 << 1;
+    element_type_ = (0x0010 << 1) | 0x0010;
 }
 
 

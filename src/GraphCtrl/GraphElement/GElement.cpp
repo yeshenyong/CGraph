@@ -271,7 +271,7 @@ CVoid GElement::dumpNode(std::ostream& oss, GElementPtr element) {
 
 
 CBool GElement::isGroup(GElementPtr element) {
-    return 0x0010 <= element->element_type_ && 0x00f0 >= element->element_type_;
+    return 0x0010 & element->element_type_;
 }
 
 CGRAPH_NAMESPACE_END

@@ -225,7 +225,7 @@ protected:
      * @param dst
      * @return
     */
-    virtual CVoid dumpEdge(std::ostream& oss, GElement* src, GElement* dst, const std::string& label="");
+    CVoid dumpEdge(std::ostream& oss, GElement* src, GElement* dst, const std::string& label="");
 
     /**
      * graphviz dump 点逻辑
