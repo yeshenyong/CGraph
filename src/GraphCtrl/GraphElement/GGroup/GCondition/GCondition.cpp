@@ -1,3 +1,11 @@
+/*
+ * @Author: 1050575224@qq.com 1050575224@qq.com
+ * @Date: 2023-02-11 12:18:21
+ * @LastEditors: 1050575224@qq.com 1050575224@qq.com
+ * @LastEditTime: 2023-02-11 14:10:41
+ * @FilePath: /CGraph/src/GraphCtrl/GraphElement/GGroup/GCondition/GCondition.cpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com
@@ -9,6 +17,11 @@
 #include "GCondition.h"
 
 CGRAPH_NAMESPACE_BEGIN
+
+
+GCondition::GCondition() {
+    element_type_ = ElementType::CONDITION;
+}
 
 
 CStatus GCondition::addElement(GElementPtr element) {
@@ -41,6 +54,37 @@ CStatus GCondition::run() {
 
 CSize GCondition::getRange() const {
     return group_elements_arr_.size();
+}
+
+
+CVoid GCondition::dump(std::ostream& oss) {
+    dumpNode(oss, this);
+    oss << "subgraph ";
+    oss << "cluster_p" << this;
+    oss << " {\nlabel=\"";
+    if (name_.empty()) oss << 'p' << this;
+    else oss << name_;
+    oss << "\";\n";
+    oss << 'p' << this << "[shape=diamond];\n";
+    oss << "color=blue;\n";
+
+    for (size_t idx = 0; idx < group_elements_arr_.size(); ++idx) {
+        const auto& element = group_elements_arr_[idx];
+        if (isGroup(element)) {
+            element->dump(oss);
+        } else {
+            dumpNode(oss, element);
+        }
+
+        std::string label = "[label=\"" + std::to_string(idx) + "\"]";
+        dumpEdge(oss, this, element, label);
+    }
+
+    oss << "}\n";
+
+    for (const auto& node : run_before_) {
+        dumpEdge(oss, this, node);
+    }
 }
 
 CGRAPH_NAMESPACE_END

@@ -1,3 +1,11 @@
+/*
+ * @Author: 1050575224@qq.com 1050575224@qq.com
+ * @Date: 2023-02-11 09:40:40
+ * @LastEditors: 1050575224@qq.com 1050575224@qq.com
+ * @LastEditTime: 2023-02-11 14:35:06
+ * @FilePath: /CGraph/src/GraphCtrl/GraphElement/GGroup/GCondition/GCondition.h
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com
@@ -14,6 +22,9 @@
 CGRAPH_NAMESPACE_BEGIN
 
 class GCondition : public GGroup {
+public:
+    explicit GCondition();
+
 protected:
     /**
      * 计算需要返回第n个信息
@@ -28,6 +39,13 @@ protected:
      * @return
      */
     CSize getRange() const;
+
+    /**
+     * graphviz dump 逻辑
+     * @param oss
+     * @return
+    */
+    CVoid dump(std::ostream& oss) final;
 
 private:
     CStatus run() override;

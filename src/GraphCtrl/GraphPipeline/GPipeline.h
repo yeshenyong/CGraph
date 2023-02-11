@@ -49,19 +49,17 @@ public:
     CStatus process(CSize runTimes = CGRAPH_DEFAULT_LOOP_TIMES);
 
     /**
-     * pipeline 信息 graphviz
-     * @param
+     * 图可视化 graphviz
+     * @param oss
      * @return
     */
     std::string dump();
-    CVoid dump(std::ostringstream& oss);
-    CVoid _dump(std::ostream& oss);
-    CVoid dumpGraph(std::ostream& oss);
-    CVoid dumpNode(GElementPtr element, std::ostream& oss);
-    CVoid dumpGroup(GElementPtr element, std::ostream& oss);
-    CBool isGroup(GElementPtr element) const;
-    CBool isRegion(GElementPtr element) const;
-    CBool isCluster(GElementPtr element) const;
+
+    /**
+     * dump 预处理cluster
+     * @param elementSet
+     * @return
+    */
     GElementPtrSet preproessorNode(GElementPtrSet elementSet);
 
 

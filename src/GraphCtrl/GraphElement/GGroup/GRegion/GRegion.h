@@ -1,3 +1,11 @@
+/*
+ * @Author: 1050575224@qq.com 1050575224@qq.com
+ * @Date: 2023-02-11 09:40:57
+ * @LastEditors: 1050575224@qq.com 1050575224@qq.com
+ * @LastEditTime: 2023-02-11 14:34:04
+ * @FilePath: /CGraph/src/GraphCtrl/GraphElement/GGroup/GRegion/GRegion.h
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com
@@ -28,6 +36,13 @@ protected:
     CStatus destroy() final;
 
     CStatus addElement(GElementPtr element) final;
+
+    /**
+     * graphviz dump 逻辑
+     * @param oss
+     * @return
+    */
+    CVoid dump(std::ostream& oss) final;
 
 private:
     GElementManagerPtr manager_ = nullptr;    // region 内部通过 manager来管理其中的 element 信息
