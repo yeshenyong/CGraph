@@ -45,6 +45,7 @@ void tutorial_function() {
         return CStatus();
     });
 
+    std::cout << pipeline->dump() << std::endl;
     pipeline->process();
     GPipelineFactory::remove(pipeline);
 }

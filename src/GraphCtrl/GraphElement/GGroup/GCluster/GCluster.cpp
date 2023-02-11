@@ -11,7 +11,7 @@
 CGRAPH_NAMESPACE_BEGIN
 
 GCluster::GCluster() {
-    element_type_ = ElementType::CLUSTER;
+    element_type_ = 0x0010 << 1;
 }
 
 
@@ -136,11 +136,7 @@ CVoid GCluster::dump(std::ostream& oss) {
     GElementPtr pre = nullptr;
     for (size_t idx = 0; idx < group_elements_arr_.size(); idx++) {
         const auto& element = group_elements_arr_[idx];
-        if (isGroup(element)) {
-            element->dump(oss);
-        } else {
-            dumpNode(oss, element);
-        }
+        element->dump(oss);
 
         if (idx != 0) {
             dumpEdge(oss, pre, element);

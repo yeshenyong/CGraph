@@ -42,6 +42,8 @@ void tutorial_condition() {
 
     status = pipeline->init();
 
+    std::cout << pipeline->dump() << std::endl;
+
     for (int i = 0; i < 3; i++) {
         status = pipeline->run();
         std::cout << "[CGraph] tutorial_condition, loop : " << i + 1 << ", and run status = " << status.getCode() << std::endl;

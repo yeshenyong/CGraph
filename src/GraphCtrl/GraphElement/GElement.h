@@ -260,7 +260,7 @@ protected:
     GEventManagerPtr event_manager_ { nullptr };     // 事件管理类
     UThreadPoolPtr thread_pool_ { nullptr };         // 用于执行的线程池信息
     GElementParamMap local_params_;                  // 用于记录当前element的内部参数
-    ElementType element_type_{ ElementType::ELEMENT }; // 用于区分element 内部类型
+    CUINT element_type_{ 0 };                        // 用于区分element 内部类型
 
     friend class GNode;
     friend class GCluster;

@@ -108,36 +108,13 @@ std::string GPipeline::dump() {
     oss << "compound=true;\n";
 
     /* 预处理: 删除cluster 内的node */
-    auto element_dump = preproessorNode(element_repository_);
 
-    for (const auto& node : element_repository_) {
-        node->dump(oss);
+    for (const auto& element : element_manager_->manager_elements_) {
+        element->dump(oss);
     }
 
     oss << "}\n";
     return oss.str();
-}
-
-
-GElementPtrSet GPipeline::preproessorNode(GElementPtrSet elementSet) {
-    std::vector<GElementPtr> eraseElement;
-    for (const auto& element : elementSet) {
-        if (element->element_type_ == ElementType::CLUSTER) {
-            auto clusterPtr = dynamic_cast<GClusterPtr>(element);
-            eraseElement.insert(eraseElement.end(), clusterPtr->group_elements_arr_.begin(), clusterPtr->group_elements_arr_.end());
-        } else if (element->element_type_ == ElementType::REGION) {
-            auto regionPtr = dynamic_cast<GRegionPtr>(element);
-            eraseElement.insert(eraseElement.end(), regionPtr->manager_->manager_elements_.begin(), regionPtr->manager_->manager_elements_.end());
-        } else if (element->element_type_ == ElementType::CONDITION) {
-            auto conditionPtr = dynamic_cast<GConditionPtr>(element);
-            eraseElement.insert(eraseElement.end(), conditionPtr->group_elements_arr_.begin(), conditionPtr->group_elements_arr_.end());
-        }
-    }
-    for (const auto& element : eraseElement) {
-        elementSet.erase(element);
-    }
-
-    return elementSet;
 }
 
 

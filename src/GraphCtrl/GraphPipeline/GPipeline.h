@@ -56,14 +56,6 @@ public:
     std::string dump();
 
     /**
-     * dump 预处理cluster
-     * @param elementSet
-     * @return
-    */
-    GElementPtrSet preproessorNode(GElementPtrSet elementSet);
-
-
-    /**
      * 根据传入的info信息，创建node节点
      * @tparam T
      * @tparam level

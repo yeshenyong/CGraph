@@ -31,6 +31,8 @@ set(CGRAPH_TUTORIAL_LIST
         T02-Cluster
         T03-Region
         T04-Complex
+        T06-Condition
+        T12-Function
         )
 
 foreach(tut ${CGRAPH_TUTORIAL_LIST})

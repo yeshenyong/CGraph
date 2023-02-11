@@ -1,11 +1,3 @@
-/*
- * @Author: 1050575224@qq.com 1050575224@qq.com
- * @Date: 2023-01-30 13:07:27
- * @LastEditors: 1050575224@qq.com 1050575224@qq.com
- * @LastEditTime: 2023-01-30 17:25:38
- * @FilePath: /CGraph/tutorial/T01-Simple.cpp
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 /***************************
 @Author: Chunel
 @Contact: chunel@foxmail.com

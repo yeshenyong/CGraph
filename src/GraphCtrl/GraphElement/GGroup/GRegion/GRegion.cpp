@@ -15,7 +15,7 @@ CGRAPH_NAMESPACE_BEGIN
 GRegion::GRegion() : GGroup() {
     manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementManager)
     is_init_ = false;
-    element_type_ = ElementType::REGION;
+    element_type_ = 0x0010 << 2;
 }
 
 
@@ -93,18 +93,10 @@ CVoid GRegion::dump(std::ostream& oss) {
     }
     oss << "\";\n";
     oss << 'p' << this << "[shape=point height=0];\n";
-    oss << "color=blue;\n";
+    oss << "color=red;\n";
 
     for (const auto& element : manager_->manager_elements_) {
-        if (isGroup(element)) {
-            element->dump(oss);
-        } else {
-            dumpNode(oss, element);
-        }
-
-        for (const auto& node : element->run_before_) {
-            dumpEdge(oss, element, node);
-        }
+        element->dump(oss);
     }
 
     oss << "}\n";
