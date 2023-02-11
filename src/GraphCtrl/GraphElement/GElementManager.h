@@ -73,17 +73,6 @@ protected:
      */
     CStatus initEngine();
 
-    /**
-     * 判断是否为 GGroup
-     * @tparam T
-     * @param element
-    */
-    template<class T, 
-             c_enable_if_t<std::is_base_of<GElement, T>::value, int> = 0>
-    static CBool isGroup(T* element) {
-        return std::is_base_of<GGroup, T>::value;
-    }
-
 private:
     GSortedGElementPtrSet manager_elements_;                    // 保存节点信息的内容
     GEnginePtr engine_ = nullptr;                               // 执行引擎
