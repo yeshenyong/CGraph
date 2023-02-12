@@ -50,9 +50,10 @@ public:
 
     /**
      * 图可视化 graphviz
+     * @param oss
      * @return
     */
-    std::string dump();
+    CStatus dump(std::ostream& oss = std::cin);
 
     /**
      * 根据传入的info信息，创建node节点

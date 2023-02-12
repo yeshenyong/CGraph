@@ -117,17 +117,19 @@ CStatus GPipeline::process(CSize runTimes) {
 }
 
 
-std::string GPipeline::dump() {
-    std::ostringstream oss;
+CStatus GPipeline::dump(std::ostream& oss) {
+    CGRAPH_FUNCTION_BEGIN
+    CGRAPH_ASSERT_NOT_NULL(element_manager_)
     oss << "digraph CGraph {\n";
     oss << "compound=true;\n";
 
     for (const auto& element : element_manager_->manager_elements_) {
+        CGRAPH_ASSERT_NOT_NULL(element)
         element->dump(oss);
     }
 
     oss << "}\n";
-    return oss.str();
+    CGRAPH_FUNCTION_END
 }
 
 

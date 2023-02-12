@@ -238,9 +238,8 @@ protected:
     /**
      * graphviz dump 点逻辑
      * @param oss
-     * @param element
     */
-    CVoid dumpNode(std::ostream& oss, GElement* element);
+    CVoid dumpElement(std::ostream& oss);
 
     /**
      * 区分element 内部类型

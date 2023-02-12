@@ -83,7 +83,7 @@ GRegion* GRegion::setGEngineType(GEngineType type) {
 
 
 CVoid GRegion::dump(std::ostream& oss) {
-    dumpNode(oss, this);
+    dumpNode(oss);
     oss << "subgraph ";
     oss << "cluster_p" << this;
     oss << " {\nlabel=\"";
@@ -94,7 +94,7 @@ CVoid GRegion::dump(std::ostream& oss) {
     }
     oss << "\";\n";
     oss << 'p' << this << "[shape=point height=0];\n";
-    oss << "color=red;\n";
+    oss << "color=blue;\n";
 
     for (const auto& element : manager_->manager_elements_) {
         element->dump(oss);

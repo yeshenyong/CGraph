@@ -50,7 +50,7 @@ CSize GCondition::getRange() const {
 
 
 CVoid GCondition::dump(std::ostream& oss) {
-    dumpNode(oss, this);
+    dumpNode(oss);
     oss << "subgraph ";
     oss << "cluster_p" << this;
     oss << " {\nlabel=\"";

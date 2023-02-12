@@ -245,7 +245,7 @@ GElement* GElement::setThreadPool(UThreadPoolPtr ptr) {
 
 
 CVoid GElement::dump(std::ostream& oss) {
-    dumpNode(oss, this);
+    dumpElement(oss);
 
     for (const auto& node : run_before_) {
         dumpEdge(oss, this, node);
@@ -266,13 +266,13 @@ CVoid GElement::dumpEdge(std::ostream& oss, GElementPtr src, GElementPtr dst, co
 }
 
 
-CVoid GElement::dumpNode(std::ostream& oss, GElementPtr element) {
-    oss << 'p' << element << "[label=\"";
-    if (element->getName().empty()) oss << 'p' << this;
-    else oss << element->getName();
+CVoid GElement::dumpNode(std::ostream& oss) {
+    oss << 'p' << this << "[label=\"";
+    if (this->name_.empty()) oss << 'p' << this;
+    else oss << this->name_;
     oss << "\"];\n";
-    if (element->loop_ > 1 && !isGroup(element)) {
-        oss << 'p' << element << " -> p" << element << "[label=\"" << element->loop_ << "\"]" << ";\n";
+    if (this->loop_ > 1 && !isGroup(this)) {
+        oss << 'p' << this << " -> p" << this << "[label=\"" << this->loop_ << "\"]" << ";\n";
     }
 }
 
