@@ -266,7 +266,7 @@ CVoid GElement::dumpEdge(std::ostream& oss, GElementPtr src, GElementPtr dst, co
 }
 
 
-CVoid GElement::dumpNode(std::ostream& oss) {
+CVoid GElement::dumpElement(std::ostream& oss) {
     oss << 'p' << this << "[label=\"";
     if (this->name_.empty()) oss << 'p' << this;
     else oss << this->name_;

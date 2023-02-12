@@ -120,7 +120,7 @@ CBool GCluster::isClusterDone() {
 
 
 CVoid GCluster::dump(std::ostream& oss) {
-    dumpNode(oss);
+    dumpElement(oss);
     oss << "subgraph ";
     oss << "cluster_p" << this;
     oss << " {\nlabel=\"";

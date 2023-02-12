@@ -83,7 +83,7 @@ GRegion* GRegion::setGEngineType(GEngineType type) {
 
 
 CVoid GRegion::dump(std::ostream& oss) {
-    dumpNode(oss);
+    dumpElement(oss);
     oss << "subgraph ";
     oss << "cluster_p" << this;
     oss << " {\nlabel=\"";
