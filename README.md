@@ -8,11 +8,13 @@
 [![awesome-cpp](https://badgen.net/badge/icon/awesome-cpp/purple?icon=awesome&label&color)](https://github.com/fffaraz/awesome-cpp)
 [![HelloGithub](https://badgen.net/badge/icon/HelloGithub/purple?icon=awesome&label&color)](https://github.com/521xueweihan/HelloGitHub/blob/master/content/HelloGitHub70.md)
 
+中文 | [English Readme](README_en.md)
+
 <h1 align="center">
   CGraph 说明文档
 </h1>
 
-><b>CGraph</b> is a cross-platform <b>D</b>irected <b>A</b>cyclic <b>G</b>raph framework based on pure C++ without any 3rd-party.</br></br>
+><b>CGraph</b> is a cross-platform <b>D</b>irected <b>A</b>cyclic <b>G</b>raph framework based on pure C++ without any 3rd-party dependencies.</br></br>
 >You, with it, can build your own operators simply, and describe any running schedules as you need, such as dependence, parallelling, aggregation and so on. Some useful tools and plugins are also provide to improve your project.</br></br>
 >Tutorials and contact information are show as follows. Please get in touch with us for free if you need more about this repository.
 
@@ -29,9 +31,16 @@
 
 
 ## 二. 编译说明
-* 本工程支持MacOS、Linux和Windows系统，无任何第三方依赖。默认使用C++11版本，已支持几乎所有功能。推荐使用C++17(或以上)版本，以获取极个别附加功能的支持，和更优的性能
+* 本工程支持MacOS、Linux和Windows系统，无任何第三方依赖。默认使用C++11版本，推荐使用C++17版本，暂不支持C++11以下的版本
 
-* 使用`CLion`作为IDE的开发者，或使用`Visual Studio 2013`(或以上版本)作为IDE的开发者，打开`CMakeLists.txt`文件作为工程，即可编译通过
+* 使用`CLion`(推荐)作为IDE的开发者，打开`CMakeLists.txt`文件作为工程，即可编译通过
+
+* Windows环境中，使用`Visual Studio`(2013版或以上版本)作为IDE的开发者，安装cmake之后，输入以下指令，即可生成`CGraph.sln`文件
+  ```shell
+  $ git clone https://github.com/ChunelFeng/CGraph.git
+  $ cd CGraph
+  $ cmake . -Bbuild    # 在 build 文件夹下，生成对应的CGraph.sln文件
+  ```
 
 * Linux环境开发者，在命令行模式下，输入以下指令，即可编译通过
   ```shell
@@ -48,10 +57,11 @@
   $ docker run -it --name CGraphEnv chunelfeng/cenv     # 开启docker容器，并进入
   ```
 
-* 提供online版本的编译调试环境，点击进入页面：[CGraph env online](https://gitpod.io/#/github.com/ChunelFeng/CGraph) ，输入以下指令，即可编译通过，并查看执行结果
+* 提供online版本的编译调试环境，点击进入页面：[CGraph env online](https://gitpod.io/#/github.com/ChunelFeng/CGraph) ，通过github账号登录。进入后，输入以下指令，即可编译通过，并查看执行结果
   ```shell
-  $ ./CGraph-build.sh          # 编译CGraph工程，生成的内容在同级/build/文件夹中
-  $ ./build/T00-HelloCGraph    # 运行第一个实例程序，并且在终端输出 Hello, CGraph.
+  $ sudo apt-get install cmake   # 安装cmake
+  $ ./CGraph-build.sh            # 编译CGraph工程，生成的内容在同级/build/文件夹中
+  $ ./build/T00-HelloCGraph      # 运行第一个实例程序，并且在终端输出 Hello, CGraph.
   ```
 
 ## 三. 使用Demo
@@ -133,6 +143,7 @@ int main() {
   <br><br>
 * [CGraph 主打歌——《听码农的话》](http://www.chunel.cn/archives/listen-to-coder)
 * [聊聊我写CGraph的这一年](http://www.chunel.cn/archives/cgraph-anniversary-introduce)
+* [从零开始主导一款收录于awesome-cpp的项目，是一种怎样的体验?](http://www.chunel.cn/archives/cgraph-awesome-cpp)
   <br><br>
 * [【B站视频】CGraph 快速引入的方法介绍](https://www.bilibili.com/video/BV1gY4y1x7JT?spm_id_from=333.337)
 
@@ -265,7 +276,14 @@ int main() {
 * 提供`CGraph Intro.xmind`文件，通过脑图的方式，介绍了CGraph的整体逻辑
 
 [2023.01.25 - v2.3.1 - Chunel]
-* 提供针对C++11版本的支持，将默认版本修改为C++11版本。感谢 [MirrorYuChen](https://github.com/MirrorYuChen) 提供相关解决方案
+* 提供针对C++11版本的支持。感谢 [MirrorYuChen](https://github.com/MirrorYuChen) 提供相关解决方案
+
+[2023.02.10 - v2.3.2 - Chunel]
+* 优化调度策略，提供调度参数配置接口
+* 提供英文版本readme.md
+
+[2023.02.12 - v2.3.3 - [yeshenyong](https://github.com/yeshenyong)]
+* 提供graphviz可视化图展示功能
 
 </details>
 
@@ -286,7 +304,7 @@ int main() {
 * Thanks to the recommendation from [awesome-cpp](https://github.com/fffaraz/awesome-cpp), we all know, it is the most authoritative recommendation list for cpp project in the world
 * Thanks to the recommendation from `Taskflow Group`: [awesome-parallel-computing](https://github.com/taskflow/awesome-parallel-computing), and we always treat [taskflow](https://github.com/taskflow/taskflow) as a role model
 * Thanks to the recommendation from [awesome-workflow-engines](https://github.com/meirwah/awesome-workflow-engines)
-* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) 等朋友（以贡献时间先后为顺序）为项目做出的贡献
+* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) [@HanYa](https://github.com/CodingHanYa) 等朋友（以贡献时间先后为序）为项目做出的贡献
 * 感谢所有为`CGraph`项目提出的意见和建议的朋友，在此不一一提及。随时欢迎大家加入，一起共建
 
 </details>

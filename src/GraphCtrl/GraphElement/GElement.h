@@ -211,6 +211,42 @@ protected:
      */
     CStatus notify(const std::string& key, CSize times = 1);
 
+    /**
+     * 设置线程池信息
+     * @param ptr
+     * @return
+     */
+    GElement* setThreadPool(UThreadPoolPtr ptr);
+
+    /**
+     * graphviz dump 逻辑
+     * @param oss
+     * @return
+    */
+    virtual CVoid dump(std::ostream& oss);
+
+    /**
+     * graphviz dump 边逻辑
+     * @param oss
+     * @param src 表示开始的元素
+     * @param dst 表示结束的元素
+     * @param label
+     * @return
+    */
+    CVoid dumpEdge(std::ostream& oss, GElement* src, GElement* dst, const std::string& label="");
+
+    /**
+     * graphviz dump 点逻辑
+     * @param oss
+    */
+    CVoid dumpElement(std::ostream& oss);
+
+    /**
+     * 当前element是否是一个 group逻辑
+     * @return
+    */
+    CBool isGroup();
+
     CGRAPH_NO_ALLOWED_COPY(GElement);
 
     CGRAPH_DECLARE_GPARAM_MANAGER_WRAPPER
@@ -224,12 +260,13 @@ protected:
     std::string session_;                            // 节点唯一id信息
     std::set<GElement *> run_before_;                // 被依赖的节点
     std::set<GElement *> dependence_;                // 依赖的节点信息
-    std::atomic<CSize> left_depend_ { 0 };        // 当 left_depend_ 值为0的时候，即可以执行该node信息
+    std::atomic<CSize> left_depend_ { 0 };           // 当 left_depend_ 值为0的时候，即可以执行该node信息
     GParamManagerPtr param_manager_ { nullptr };     // 整体流程的参数管理类，所有pipeline中的所有节点共享
     GAspectManagerPtr aspect_manager_ { nullptr };   // 整体流程的切面管理类
     GEventManagerPtr event_manager_ { nullptr };     // 事件管理类
     UThreadPoolPtr thread_pool_ { nullptr };         // 用于执行的线程池信息
     GElementParamMap local_params_;                  // 用于记录当前element的内部参数
+    GElementType element_type_;                      // 用于区分element 内部类型
 
     friend class GNode;
     friend class GCluster;

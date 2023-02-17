@@ -15,6 +15,7 @@ CGRAPH_NAMESPACE_BEGIN
 GRegion::GRegion() : GGroup() {
     manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementManager)
     is_init_ = false;
+    element_type_ = GElementType::REGION;
 }
 
 
@@ -30,6 +31,7 @@ CStatus GRegion::init() {
     CGRAPH_ASSERT_NOT_NULL(manager_)
 
     // 在region中，需要专门的调度逻辑
+    this->manager_->setThreadPool(thread_pool_);
     this->manager_->setScheduleStrategy(CGRAPH_REGION_TASK_STRATEGY);
     status = this->manager_->init();
     CGRAPH_FUNCTION_CHECK_STATUS
@@ -77,6 +79,24 @@ GRegion* GRegion::setGEngineType(GEngineType type) {
 
     this->manager_->setEngineType(type);
     return this;
+}
+
+
+CVoid GRegion::dump(std::ostream& oss) {
+    dumpElement(oss);
+    dumpGroupLabelBegin(oss);
+    oss << 'p' << this << "[shape=point height=0];\n";
+    oss << "color=blue;\n";
+
+    for (const auto& element : manager_->manager_elements_) {
+        element->dump(oss);
+    }
+
+    dumpGroupLabelEnd(oss);
+
+    for (const auto& node : run_before_) {
+        dumpEdge(oss, this, node);
+    }
 }
 
 CGRAPH_NAMESPACE_END

@@ -17,6 +17,11 @@ CGRAPH_NAMESPACE_BEGIN
 
 class GRegion : public GGroup {
 public:
+    /**
+     * 设置EngineType信息
+     * @param type
+     * @return
+     */
     GRegion* setGEngineType(GEngineType type);
 
 protected:
@@ -28,6 +33,8 @@ protected:
     CStatus destroy() final;
 
     CStatus addElement(GElementPtr element) final;
+
+    CVoid dump(std::ostream& oss) final;
 
 private:
     GElementManagerPtr manager_ = nullptr;    // region 内部通过 manager来管理其中的 element 信息

@@ -10,6 +10,10 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
+GCondition::GCondition() {
+    element_type_ = GElementType::CONDITION;
+}
+
 
 CStatus GCondition::addElement(GElementPtr element) {
     CGRAPH_FUNCTION_BEGIN
@@ -41,6 +45,28 @@ CStatus GCondition::run() {
 
 CSize GCondition::getRange() const {
     return group_elements_arr_.size();
+}
+
+
+CVoid GCondition::dump(std::ostream& oss) {
+    dumpElement(oss);
+    dumpGroupLabelBegin(oss);
+    oss << 'p' << this << "[shape=diamond];\n";
+    oss << "color=blue;\n";
+
+    for (auto i = 0; i < group_elements_arr_.size(); ++i) {
+        const auto& cur = group_elements_arr_[i];
+        cur->dump(oss);
+
+        std::string label = "[label=\"" + std::to_string(i) + "\"]";
+        dumpEdge(oss, this, cur, label);
+    }
+
+    dumpGroupLabelEnd(oss);
+
+    for (const auto& element : run_before_) {
+        dumpEdge(oss, this, element);
+    }
 }
 
 CGRAPH_NAMESPACE_END

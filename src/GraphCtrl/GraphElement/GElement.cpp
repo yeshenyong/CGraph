@@ -21,8 +21,8 @@ const std::string& GElement::getSession() const {
 
 
 GElement::GElement() {
-    this->session_ = CGRAPH_GENERATE_SESSION;
-    this->thread_pool_ = UThreadPoolSingleton::get();
+    this->session_ = URandom<>::generateSession();
+    element_type_ = GElementType::ELEMENT;
 }
 
 
@@ -237,6 +237,58 @@ CStatus GElement::notify(const std::string& key, CSize times) {
     }
 
     CGRAPH_FUNCTION_END
+}
+
+
+GElement* GElement::setThreadPool(UThreadPoolPtr ptr) {
+    CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(ptr)
+    CGRAPH_ASSERT_INIT_RETURN_NULL(false)
+    this->thread_pool_ = ptr;
+    return this;
+}
+
+
+CVoid GElement::dump(std::ostream& oss) {
+    dumpElement(oss);
+
+    for (const auto& node : run_before_) {
+        dumpEdge(oss, this, node);
+    }
+}
+
+
+CVoid GElement::dumpEdge(std::ostream& oss, GElementPtr src, GElementPtr dst, const std::string& label) {
+    if (src->isGroup() && dst->isGroup()) {
+        // 在group的逻辑中，添加 cluster_ 的信息
+        oss << 'p' << src << " -> p" << dst << label << "[ltail=cluster_p" << src << " lhead=cluster_p" << dst << "];\n";
+    } else if (src->isGroup() && !dst->isGroup()) {
+        oss << 'p' << src << " -> p" << dst << label << "[ltail=cluster_p" << src << "];\n";
+    } else if (!src->isGroup() && dst->isGroup()) {
+        oss << 'p' << src << " -> p" << dst << label << "[lhead=cluster_p" << dst << "];\n";
+    } else {
+        oss << 'p' << src << " -> p" << dst << label << ";\n";
+    }
+}
+
+
+CVoid GElement::dumpElement(std::ostream& oss) {
+    oss << 'p' << this << "[label=\"";
+    if (this->name_.empty()) {
+        oss << 'p' << this;    // 如果没有名字，则通过当前指针位置来代替
+    } else {
+        oss << this->name_;
+    }
+
+    oss << "\"];\n";
+    if (this->loop_ > 1 && !this->isGroup()) {
+        oss << 'p' << this << " -> p" << this << "[label=\"" << this->loop_ << "\"]" << ";\n";
+    }
+}
+
+
+CBool GElement::isGroup() {
+    // 按位与 GROUP有值，表示是 GROUP的逻辑
+    return (long(element_type_) & long(GElementType::GROUP)) > 0;
 }
 
 CGRAPH_NAMESPACE_END

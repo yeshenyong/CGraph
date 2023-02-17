@@ -10,6 +10,10 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
+GGroup::GGroup() {
+    element_type_ = GElementType::GROUP;
+}
+
 CStatus GGroup::init() {
     CGRAPH_FUNCTION_BEGIN
 
@@ -35,6 +39,29 @@ CStatus GGroup::destroy() {
 
     is_init_ = false;
     CGRAPH_FUNCTION_END
+}
+
+
+CVoid GGroup::dumpGroupLabelBegin(std::ostream& oss) {
+    oss << "subgraph ";
+    oss << "cluster_p" << this;    // cluster_ 是 graphviz的关键字，和CGraph中GCluster逻辑无关
+    oss << " {\nlabel=\"";
+
+    if (name_.empty()) {
+        oss << 'p' << this;
+    } else {
+        oss << name_;
+    }
+
+    if (this->loop_ > 1) {
+        oss << " loop=" << this->loop_;
+    }
+    oss << "\";\n";
+}
+
+
+CVoid GGroup::dumpGroupLabelEnd(std::ostream& oss) {
+    oss << "}\n";
 }
 
 CGRAPH_NAMESPACE_END

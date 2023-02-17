@@ -15,6 +15,8 @@ CGRAPH_NAMESPACE_BEGIN
 
 class GCondition : public GGroup {
 protected:
+    explicit GCondition();
+
     /**
      * 计算需要返回第n个信息
      * 执行最后一个，返回-1即可。
@@ -28,6 +30,8 @@ protected:
      * @return
      */
     CSize getRange() const;
+
+    CVoid dump(std::ostream& oss) final;
 
 private:
     CStatus run() override;
