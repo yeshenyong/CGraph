@@ -10,7 +10,7 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
-CStatus GStaticEngine::setUp(const GSortedGElementPtrSet& elements) {
+CStatus GStaticEngine::setup(const GSortedGElementPtrSet& elements) {
     CGRAPH_FUNCTION_BEGIN
     status = mark(elements);
     CGRAPH_FUNCTION_CHECK_STATUS
@@ -30,7 +30,7 @@ CStatus GStaticEngine::mark(const GSortedGElementPtrSet& elements) {
      * 2，当前节点依赖的节点，只有一个后继
      * 3，当前节点的依赖的后继，仍是当前节点
      */
-    for (GElement* element : elements) {
+    for (GElementPtr element : elements) {
         if (1 == element->dependence_.size()
             && 1 == (*element->dependence_.begin())->run_before_.size()
             && (*(element->dependence_.begin()))->run_before_.find(element) != (*(element->dependence_.begin()))->run_before_.end()) {
@@ -165,7 +165,9 @@ CStatus GStaticEngine::afterRunCheck() {
     CGRAPH_FUNCTION_BEGIN
     /* 验证是否所有的内容均被执行过 */
     if (run_element_size_ != total_element_size_) {
-        CGRAPH_RETURN_ERROR_STATUS("pipeline static run element size check failed...")
+        const std::string& errInfo = "run size = [" + std::to_string(run_element_size_)
+                                      + "], total size = [" + std::to_string(total_element_size_) + "] ...";
+        CGRAPH_RETURN_ERROR_STATUS("pipeline static run element size check failed, " + errInfo)
     }
 
     /* 需要验证每个cluster里的每个内容是否被执行过一次 */

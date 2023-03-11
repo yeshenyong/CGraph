@@ -10,18 +10,7 @@
 
 CGRAPH_NAMESPACE_BEGIN
 
-const std::string& GElement::getName() const {
-    return this->name_;
-}
-
-
-const std::string& GElement::getSession() const {
-    return this->session_;
-}
-
-
 GElement::GElement() {
-    this->session_ = URandom<>::generateSession();
     element_type_ = GElementType::ELEMENT;
 }
 
@@ -61,7 +50,7 @@ GElementPtr GElement::setName(const std::string& name) {
 
     // 设置name信息的时候，顺便给 aspect_manager_ 一起设置了
     if (aspect_manager_) {
-        aspect_manager_->setName(name);
+        aspect_manager_->setName(name_);
     }
     return this;
 }
@@ -121,13 +110,12 @@ CStatus GElement::addDependGElements(const GElementPtrSet& elements) {
 CStatus GElement::setElementInfo(const GElementPtrSet& dependElements,
                                  const std::string& name,
                                  CSize loop,
-                                 CLevel level,
                                  GParamManagerPtr paramManager,
                                  GEventManagerPtr eventManager) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT(false)
 
-    this->setName(name)->setLoop(loop)->setLevel(level);
+    this->setName(name)->setLoop(loop);
     param_manager_ = paramManager;
     event_manager_ = eventManager;
     status = this->addDependGElements(dependElements);
@@ -226,16 +214,12 @@ CIndex GElement::getThreadNum() {
 }
 
 
-CStatus GElement::notify(const std::string& key, CSize times) {
+CStatus GElement::notify(const std::string& key, GEventType type) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_NOT_NULL(event_manager_)
     CGRAPH_ASSERT_INIT(true)
 
-    for (CSize i = 0; i < times; i++) {
-        status = event_manager_->trigger(key);
-        CGRAPH_FUNCTION_CHECK_STATUS
-    }
-
+    status = event_manager_->trigger(key, type);
     CGRAPH_FUNCTION_END
 }
 

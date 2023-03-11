@@ -59,9 +59,9 @@
 
 * 提供online版本的编译调试环境，点击进入页面：[CGraph env online](https://gitpod.io/#/github.com/ChunelFeng/CGraph) ，通过github账号登录。进入后，输入以下指令，即可编译通过，并查看执行结果
   ```shell
-  $ sudo apt-get install cmake   # 安装cmake
-  $ ./CGraph-build.sh            # 编译CGraph工程，生成的内容在同级/build/文件夹中
-  $ ./build/T00-HelloCGraph      # 运行第一个实例程序，并且在终端输出 Hello, CGraph.
+  $ sudo apt-get install cmake             # 安装cmake
+  $ ./CGraph-build.sh                      # 编译CGraph工程，生成的内容在同级/build/文件夹中
+  $ ./build/tutorial/T00-HelloCGraph       # 运行第一个实例程序，并且在终端输出 Hello, CGraph.
   ```
 
 ## 三. 使用Demo
@@ -74,18 +74,17 @@ class MyNode1 : public CGraph::GNode {
 public:
     CStatus run () override {
         CStatus status;
-        CGraph::CGRAPH_ECHO("[%s], enter MyNode1 run function. Sleep for 1 second ... ", this->getName().c_str());
+        printf("[%s], Sleep for 1 second ...", this->getName().c_str());
         CGRAPH_SLEEP_SECOND(1)
         return status;
     }
 };
 
-
 class MyNode2 : public CGraph::GNode {
 public:
     CStatus run () override {
         CStatus status;
-        CGraph::CGRAPH_ECHO("[%s], enter MyNode2 run function. Sleep for 2 second ... ", this->getName().c_str());
+        printf("[%s], Sleep for 2 second ...", this->getName().c_str());
         CGRAPH_SLEEP_SECOND(2)
         return status;
     }
@@ -104,10 +103,10 @@ int main() {
     GElementPtr a, b, c, d = nullptr;
 
     /* 注册节点，其中MyNode1和MyNode2必须为GNode的子类，否则无法通过编译 */
-    CStatus status = pipeline->registerGElement<MyNode1>(&a, {}, "nodeA");    // 将名为nodeA，无执行依赖的node信息，注册入pipeline中
-    status += pipeline->registerGElement<MyNode2>(&b, {a}, "nodeB");    // 将名为nodeB，依赖a执行的node信息，注册入pipeline中
+    CStatus status = pipeline->registerGElement<MyNode1>(&a, {}, "nodeA");
+    status += pipeline->registerGElement<MyNode2>(&b, {a}, "nodeB");
     status += pipeline->registerGElement<MyNode1>(&c, {a}, "nodeC");
-    status += pipeline->registerGElement<MyNode2>(&d, {b, c}, "nodeD");    // 将名为nodeD，依赖{b,c}执行的node信息，注册入pipeline中
+    status += pipeline->registerGElement<MyNode2>(&d, {b, c}, "nodeD");
     if (!status.isOK()) {
         return;    // 对以上所有CGraph接口的返回值做判定
     }
@@ -133,6 +132,7 @@ int main() {
 * [纯序员给你介绍图化框架的简单实现——面向切面](http://www.chunel.cn/archives/cgraph-aspect-introduce)
 * [纯序员给你介绍图化框架的简单实现——函数注入](http://www.chunel.cn/archives/cgraph-function-introduce)
 * [纯序员给你介绍图化框架的简单实现——消息机制](http://www.chunel.cn/archives/cgraph-message-introduce)
+* [纯序员给你介绍图化框架的简单实现——事件触发](http://www.chunel.cn/archives/cgraph-event-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（一）](http://www.chunel.cn/archives/cgraph-threadpool-1-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（二）](http://www.chunel.cn/archives/cgraph-threadpool-2-introduce)
 * [纯序员给你介绍图化框架的简单实现——线程池优化（三）](http://www.chunel.cn/archives/cgraph-threadpool-3-introduce)
@@ -282,8 +282,13 @@ int main() {
 * 优化调度策略，提供调度参数配置接口
 * 提供英文版本readme.md
 
-[2023.02.12 - v2.3.3 - [yeshenyong](https://github.com/yeshenyong)]
+[2023.02.12 - v2.3.3 - [yeshenyong](https://github.com/yeshenyong), Chunel]
 * 提供graphviz可视化图展示功能
+* 提供参数链路追踪功能
+
+[2023.02.22 - v2.3.4 - Chunel]
+* 优化Windows系统下调度机制
+* 优化`param`机制和`event`机制
 
 </details>
 
@@ -304,7 +309,7 @@ int main() {
 * Thanks to the recommendation from [awesome-cpp](https://github.com/fffaraz/awesome-cpp), we all know, it is the most authoritative recommendation list for cpp project in the world
 * Thanks to the recommendation from `Taskflow Group`: [awesome-parallel-computing](https://github.com/taskflow/awesome-parallel-computing), and we always treat [taskflow](https://github.com/taskflow/taskflow) as a role model
 * Thanks to the recommendation from [awesome-workflow-engines](https://github.com/meirwah/awesome-workflow-engines)
-* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) [@HanYa](https://github.com/CodingHanYa) 等朋友（以贡献时间先后为序）为项目做出的贡献
+* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) [@HanYa](https://github.com/CodingHanYa) [@Ryan](https://github.com/ryanhuang) 等朋友（以贡献时间先后为序）为项目做出的贡献
 * 感谢所有为`CGraph`项目提出的意见和建议的朋友，在此不一一提及。随时欢迎大家加入，一起共建
 
 </details>
