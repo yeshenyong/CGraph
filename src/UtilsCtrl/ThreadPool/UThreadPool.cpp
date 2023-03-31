@@ -15,13 +15,6 @@ UThreadPool::UThreadPool(CBool autoInit, const UThreadPoolConfig& config) noexce
     is_init_ = false;
     input_task_num_ = 0;
     this->setConfig(config);    // setConfig 函数，用在 is_init_ 设定之后
-    is_monitor_ = config_.monitor_enable_;        /** 根据参数设定，决定是否开启监控线程。默认开启 */
-    /**
-     * CGraph 本身支持跨平台运行
-     * 如果在windows平台上，通过Visual Studio(2017版本或以下) 版本，将 UThreadPool 类封装程.dll文件时，遇到无法启动的问题
-     * 请参考此链接：https://github.com/ChunelFeng/CGraph/issues/17
-     */
-    monitor_thread_ = std::move(std::thread(&UThreadPool::monitor, this));
     if (autoInit) {
         this->init();
     }
@@ -29,7 +22,7 @@ UThreadPool::UThreadPool(CBool autoInit, const UThreadPoolConfig& config) noexce
 
 
 UThreadPool::~UThreadPool() {
-    is_monitor_ = false;    // 在析构的时候，才释放监控线程。先释放监控线程，再释放其他的线程
+    this->config_.monitor_enable_ = false;    // 在析构的时候，才释放监控线程。先释放监控线程，再释放其他的线程
     if (monitor_thread_.joinable()) {
         monitor_thread_.join();
     }
@@ -53,6 +46,7 @@ CStatus UThreadPool::init() {
         CGRAPH_FUNCTION_END
     }
 
+    monitor_thread_ = std::move(std::thread(&UThreadPool::monitor, this));
     thread_record_map_.clear();
     primary_threads_.reserve(config_.default_thread_size_);
     for (int i = 0; i < config_.default_thread_size_; i++) {
@@ -164,6 +158,11 @@ CStatus UThreadPool::destroy() {
 }
 
 
+CBool UThreadPool::isInit() const {
+    return is_init_;
+}
+
+
 CIndex UThreadPool::dispatch(CIndex origIndex) {
     if (unlikely(config_.fair_lock_enable_)) {
         return CGRAPH_DEFAULT_TASK_STRATEGY;    // 如果开启fair lock，则全部写入 pool的queue中，依次执行
@@ -204,14 +203,14 @@ CStatus UThreadPool::createSecondaryThread(CInt size) {
 
 
 CVoid UThreadPool::monitor() {
-    while (is_monitor_) {
-        while (is_monitor_ && !is_init_) {
+    while (config_.monitor_enable_) {
+        while (config_.monitor_enable_ && !is_init_) {
             // 如果没有init，则一直处于空跑状态
             CGRAPH_SLEEP_SECOND(1)
         }
 
         int span = config_.monitor_span_;
-        while (is_monitor_ && is_init_ && span--) {
+        while (config_.monitor_enable_ && is_init_ && span--) {
             CGRAPH_SLEEP_SECOND(1)    // 保证可以快速退出
         }
 

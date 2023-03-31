@@ -44,19 +44,20 @@ public:
     /**
      * 获取参数
      * @param value
+     * @param timeout
      * @return
      */
     template<class TImpl,
             c_enable_if_t<std::is_base_of<T, TImpl>::value, int> = 0>
-    CVoid recv(TImpl& value) {
-        queue_.waitPop(value);
+    CStatus recv(TImpl& value, CMSec timeout) {
+        return queue_.waitPopWithTimeout(value, timeout);
     }
 
     /**
      * 获取容量大小
      * @return
      */
-    [[nodiscard]] CUint getCapacity() const {
+    CUint getCapacity() const {
         return queue_.getCapacity();
     }
 

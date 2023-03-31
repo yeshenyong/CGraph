@@ -24,7 +24,7 @@
 
 使用者只需继承`GNode`(节点)类，实现子类的run()方法，并根据需要设定依赖关系，即可实现任务的图化执行。还可以通过设定各种包含多节点信息的`GGroup`(组)，自行控制图的条件判断、循环和并发执行逻辑。
 
-项目提供了丰富的参数类型，用于不同应用场景下的数据互通。此外，还可以通过添加`GAspect`(切面)的方式，实现以上各种元素功能的横向扩展，或是通过引入`GAdapter`(适配器)对单个节点功能进行加强。
+项目提供了丰富的`Param`(参数)类型，用于不同应用场景下的数据互通。此外，还可以通过添加`GAspect`(切面)的方式，实现以上各种元素功能的横向扩展；通过引入`GAdapter`(适配器)对单个节点功能进行加强；或者通过添加`GEvent`(信号)，丰富和优化执行逻辑。
 
 ![CGraph Skeleton](https://github.com/ChunelFeng/CGraph/blob/main/doc/image/CGraph%20Skeleton.jpg)
 <br>
@@ -39,7 +39,15 @@
   ```shell
   $ git clone https://github.com/ChunelFeng/CGraph.git
   $ cd CGraph
-  $ cmake . -Bbuild    # 在 build 文件夹下，生成对应的CGraph.sln文件
+  $ cmake . -Bbuild    # 在 build 文件夹下，生成对应的 CGraph.sln 文件
+  ```
+
+* MacOS环境中，使用`Xcode`作为IDE的开发者，安装cmake之后，输入以下指令，即可生成`CGraph.xcodeproj`文件
+  ```shell
+  $ git clone https://github.com/ChunelFeng/CGraph.git
+  $ cd CGraph
+  $ mkdir build && cd build
+  $ cmake .. -G Xcode    # 在 build 文件夹下，生成对应的 CGraph.xcodeproj 文件
   ```
 
 * Linux环境开发者，在命令行模式下，输入以下指令，即可编译通过
@@ -49,12 +57,6 @@
   $ cmake . -Bbuild
   $ cd build
   $ make -j8
-  ```
-
-* 若本地无法编译，提供基于`Ubuntu 20.04`的Docker镜像。输入以下指令，即可获取并进入
-  ```shell
-  $ docker pull chunelfeng/cenv                         # 获取docker镜像
-  $ docker run -it --name CGraphEnv chunelfeng/cenv     # 开启docker容器，并进入
   ```
 
 * 提供online版本的编译调试环境，点击进入页面：[CGraph env online](https://gitpod.io/#/github.com/ChunelFeng/CGraph) ，通过github账号登录。进入后，输入以下指令，即可编译通过，并查看执行结果
@@ -112,7 +114,7 @@ int main() {
     }
 
     /* 执行流图框架 */
-    status = pipeline->process();
+    pipeline->process();
     GPipelineFactory::remove(pipeline);
 
     return 0;
@@ -144,6 +146,7 @@ int main() {
 * [CGraph 主打歌——《听码农的话》](http://www.chunel.cn/archives/listen-to-coder)
 * [聊聊我写CGraph的这一年](http://www.chunel.cn/archives/cgraph-anniversary-introduce)
 * [从零开始主导一款收录于awesome-cpp的项目，是一种怎样的体验?](http://www.chunel.cn/archives/cgraph-awesome-cpp)
+* [炸裂！CGraph性能全面超越taskflow之后，作者却说他更想...](http://www.chunel.cn/archives/cgraph-compare-taskflow-v1)
   <br><br>
 * [【B站视频】CGraph 快速引入的方法介绍](https://www.bilibili.com/video/BV1gY4y1x7JT?spm_id_from=333.337)
 
@@ -240,7 +243,7 @@ int main() {
 
 [2022.04.05 - v2.0.0 - Chunel]
 * 提供`domain`(领域)功能，提供`Ann`领域抽象模型，开始支持个别专业方向
-* 提供hold执行机制，支持根据运行时条件，判断是否需要重新执行当前内容，直到满足条件为止
+* 提供hold执行机制
 * 更新`tutorial`内容
 
 [2022.05.01 - v2.0.1 - Chunel]
@@ -290,6 +293,11 @@ int main() {
 * 优化Windows系统下调度机制
 * 优化`param`机制和`event`机制
 
+[2023.03.25 - v2.4.0 - [woodx](https://github.com/woodx9), Chunel]
+* 提供可运行的docker环境，和构建docker环境的dockerfile文件
+* 提供pipeline调度资源管控机制
+* 优化调度性能
+
 </details>
 
 ------------
@@ -309,7 +317,7 @@ int main() {
 * Thanks to the recommendation from [awesome-cpp](https://github.com/fffaraz/awesome-cpp), we all know, it is the most authoritative recommendation list for cpp project in the world
 * Thanks to the recommendation from `Taskflow Group`: [awesome-parallel-computing](https://github.com/taskflow/awesome-parallel-computing), and we always treat [taskflow](https://github.com/taskflow/taskflow) as a role model
 * Thanks to the recommendation from [awesome-workflow-engines](https://github.com/meirwah/awesome-workflow-engines)
-* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) [@HanYa](https://github.com/CodingHanYa) [@Ryan](https://github.com/ryanhuang) 等朋友（以贡献时间先后为序）为项目做出的贡献
+* 感谢 [@yangyuxiang77](https://github.com/yangyuxiang77) [@logerrors](https://github.com/logerrors) [@whenever5225](https://github.com/whenever5225) [@May-Yaha](https://github.com/May-Yaha) [@Codesire-Deng](https://github.com/Codesire-Deng) [@yeshenyong](https://github.com/yeshenyong) [@MirrorYuChen](https://github.com/MirrorYuChen) [@HanYa](https://github.com/CodingHanYa) [@Ryan](https://github.com/ryanhuang) [@ATX735](https://github.com/ATX735) [@woodx](https://github.com/woodx9) 等朋友（以贡献时间先后为序）为项目做出的贡献
 * 感谢所有为`CGraph`项目提出的意见和建议的朋友，在此不一一提及。随时欢迎大家加入，一起共建
 
 </details>

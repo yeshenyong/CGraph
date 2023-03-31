@@ -22,7 +22,7 @@ You only need to inherit `GNode` class, implement the `run()` method in the subc
 
 At the same time, you can also control the graph conditional judgment, loop or concurrent execution logic by setting various `GGroup`s, which containing multi-node information by themselves.
 
-You can transfer your params in many scenes. It is also possible to extend the functions of the above elements horizontally by adding `GAspect`, or to enhance the functions of individual nodes by introducing various `GAdapter`.
+You can transfer your params in many scenes. It is also possible to extend the functions of the above elements horizontally by adding `GAspect`, to enhance the functions of individual nodes by introducing various `GAdapter`, or to enrich pipeline schedule by `GEvent`.
 
 ![CGraph Skeleton](https://github.com/ChunelFeng/CGraph/blob/main/doc/image/CGraph%20Skeleton.jpg)
 <br>
@@ -39,6 +39,14 @@ You can transfer your params in many scenes. It is also possible to extend the f
   $ cmake . -Bbuild
   ```
 
+* Developers on MacOS system, using `Xcode` as IDE, with cmake, enter commands as flowers to build `CGraph.xcodeproj` file.
+  ```shell
+  $ git clone https://github.com/ChunelFeng/CGraph.git
+  $ cd CGraph
+  $ mkdir build && cd build
+  $ cmake .. -G Xcode
+  ```
+
 * Developers on Linux system, enter commands as flowers to compile.
   ```shell
   $ git clone https://github.com/ChunelFeng/CGraph.git
@@ -46,12 +54,6 @@ You can transfer your params in many scenes. It is also possible to extend the f
   $ cmake . -Bbuild
   $ cd build
   $ make -j8
-  ```
-
-* If you want to build it in docker, image based on `Ubuntu 20.04` is provided.
-  ```shell
-  $ docker pull chunelfeng/cenv
-  $ docker run -it --name CGraphEnv chunelfeng/cenv
   ```
 
 * Compile online, enter [CGraph env online](https://gitpod.io/#/github.com/ChunelFeng/CGraph), log in with your Github id, enter commands as flowers to compile and run your first tutorial.

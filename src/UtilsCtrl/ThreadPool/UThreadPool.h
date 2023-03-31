@@ -65,7 +65,7 @@ public:
     template<typename FunctionType>
     auto commit(const FunctionType& func,
                 CIndex index = CGRAPH_DEFAULT_TASK_STRATEGY)
-    -> std::future<typename std::result_of<FunctionType()>::type>;
+    -> std::future<decltype(std::declval<FunctionType>()())>;
 
     /**
      * 根据优先级，执行任务
@@ -78,7 +78,7 @@ public:
     template<typename FunctionType>
     auto commitWithPriority(const FunctionType& func,
                             int priority)
-    -> std::future<typename std::result_of<FunctionType()>::type>;
+    -> std::future<decltype(std::declval<FunctionType>()())>;;
 
     /**
      * 执行任务组信息
@@ -115,6 +115,12 @@ public:
      */
     CStatus destroy() final;
 
+    /**
+     * 判断线程池是否已经初始化了
+     * @return
+     */
+    CBool isInit() const;
+
 
 protected:
     /**
@@ -141,7 +147,6 @@ protected:
 
 private:
     CBool is_init_ { false };                                                       // 是否初始化
-    CBool is_monitor_ { true };                                                     // 是否需要监控
     CInt cur_index_ = 0;                                                            // 记录放入的线程数
     CULong input_task_num_ = 0;                                                     // 放入的任务的个数
     UAtomicQueue<UTask> task_queue_;                                                // 用于存放普通任务

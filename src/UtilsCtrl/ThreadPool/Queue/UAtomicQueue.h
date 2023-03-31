@@ -108,9 +108,17 @@ public:
      * @param value
      */
     CVoid push(T&& value) {
-        std::unique_ptr<T> task(c_make_unique<T>(std::move(value)));
-        CGRAPH_LOCK_GUARD lk(mutex_);
-        queue_.push(std::move(task));
+        std::unique_ptr<typename std::remove_reference<T>::type>     \
+                task(c_make_unique<typename std::remove_reference<T>::type>(std::forward<T>(value)));
+        while (true) {
+            if (mutex_.try_lock()) {
+                queue_.push(std::move(task));
+                mutex_.unlock();
+                break;
+            } else {
+                std::this_thread::yield();
+            }
+        }
         cv_.notify_one();
     }
 
@@ -119,7 +127,7 @@ public:
      * 判定队列是否为空
      * @return
      */
-    [[nodiscard]] CBool empty() {
+    CBool empty() {
         CGRAPH_LOCK_GUARD lk(mutex_);
         return queue_.empty();
     }
