@@ -7,7 +7,7 @@
 using namespace CGraph;
 using GElementSet = std::set<GElementPtr>;
 
-PYBIND11_MODULE(cgraph, m) {
+PYBIND11_MODULE(pyCGraph, m) {
 
     m.doc() = "Python interface for CGraph";
 
@@ -20,24 +20,17 @@ PYBIND11_MODULE(cgraph, m) {
         GPipelineFactory::remove(pipeline);
     });
 
-    m.def("cast_set", []() { return GElementPtrSet{}; });
-    m.def("load_set", [](const GElementPtrSet &s) { 
-        std::ofstream out = std::ofstream("output.txt");
-        for (auto it : s) {
-            out << it << ", ";     
-        }
-        out << ", size = " << s.size();
-        out.flush();
-     });
-
     py::class_<GPipeline, std::unique_ptr<GPipeline, py::nodelete>>(m, "GPipeline")
         .def("init", &GPipeline::init)
         .def("run", &GPipeline::run, py::call_guard<py::gil_scoped_release>())
         .def("process", &GPipeline::process)
         .def("destroy", &GPipeline::destroy)
+        .def("dump", [](GPipeline& self) {
+            return self.dump();
+        })
         .def("registerGElement", &GPipeline::registerPyGElement,
             py::arg("elementRef"),
-            py::arg("dependElements"),
+            py::arg("dependElements") = GElementPtrSet{},
             py::arg("name") = CGRAPH_EMPTY,
             py::arg("loop") = 1);
 
@@ -92,23 +85,15 @@ PYBIND11_MODULE(cgraph, m) {
         }
     };
 
-    // py::class_<GNode, GElement>(m, "GNode");
-
-    py::class_<GElement, PyGElement, std::unique_ptr<GElement, py::nodelete> /* <--- trampoline*/>(m, "GElement")
-        .def(py::init<>())
+    py::class_<GElement, PyGElement, std::unique_ptr<GElement, py::nodelete> >(m, "GElement")
+        .def(py::init<>())  // 构造函数 py::init<>
         .def("run", &GElement::run)
         .def("destroy", &GElement::destroy);
 
 
 
-    py::class_<GNode, PyGNode, GElement /* <--- trampoline*/>(m, "GNode")
+    py::class_<GNode, PyGNode, GElement,  std::unique_ptr<GNode, py::nodelete> >(m, "GNode")
         .def(py::init<>())
         .def("run", &GNode::run)
         .def("destroy", &GNode::destroy);
-
-    // py::class_<GNode, GElement>(m, "GNode")
-    //     .def(py::init<>());
-        // .def("run", &GNode::run)
-        // .def("destroy", &GNode::destroy);
-
 }

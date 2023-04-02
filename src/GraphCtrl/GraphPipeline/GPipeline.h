@@ -218,6 +218,21 @@ public:
      */
     CGRAPH_DECLARE_GPARAM_MANAGER_WRAPPER
 
+    /**
+     * Python 在图中注册一个Element信息
+     * 如果注册的是GNode信息，则内部自动生成
+     * 如果注册的是GGroup信息，则需外部提前生成，然后注册进来
+     * @param elementRef
+     * @param dependElements
+     * @param name
+     * @param loop
+     * @return
+     */
+    CStatus registerPyGElement(GElementPtr elementRef,
+                               const GElementPtrSet &dependElements = std::initializer_list<GElementPtr>(),
+                               const std::string &name = CGRAPH_EMPTY,
+                               CSize loop = CGRAPH_DEFAULT_LOOP_TIMES);
+
 protected:
     explicit GPipeline();
     ~GPipeline() override;

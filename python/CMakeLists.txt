@@ -14,5 +14,5 @@ file(GLOB_RECURSE CGRAPH_SRC_LIST "../src/*.cpp")
 
 find_package(pybind11 REQUIRED)
 
-pybind_add_module(cgraph ./c/py_export.cpp ${CGRAPH_SRC_LIST})
+pybind11_add_module(CGraph ./c/py_export.cpp ${CGRAPH_SRC_LIST})
 

@@ -1,16 +1,8 @@
-/***************************
-@Author: Chunel
-@Contact: chunel@foxmail.com
-@File: Graphic.cpp
-@Time: 2021/6/2 10:15 下午
-@Desc: 
-***************************/
-
-#include "GPipeline.h"
+#include "GPipelinePy.h"
 
 CGRAPH_NAMESPACE_BEGIN
 
-GPipeline::GPipeline() {
+GPipelinePy::GPipelinePy() {
     session_ = URandom<>::generateSession(CGRAPH_STR_PIPELINE);
     element_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GElementManager)
     param_manager_ = CGRAPH_SAFE_MALLOC_COBJECT(GParamManager)
@@ -19,20 +11,15 @@ GPipeline::GPipeline() {
 }
 
 
-GPipeline::~GPipeline() {
+GPipelinePy::~GPipelinePy() {
     CGRAPH_DELETE_PTR(daemon_manager_)
     CGRAPH_DELETE_PTR(element_manager_)
     CGRAPH_DELETE_PTR(param_manager_)
     CGRAPH_DELETE_PTR(event_manager_)
-
-    // 结束的时候，清空所有创建的节点信息。所有节点信息，仅在这一处释放
-    for (GElementPtr element : element_repository_) {
-        CGRAPH_DELETE_PTR(element)
-    }
 }
 
 
-CStatus GPipeline::init() {
+CStatus GPipelinePy::init() {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT(false)    // 必须是非初始化的状态下，才可以初始化。反之同理
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
@@ -54,7 +41,7 @@ CStatus GPipeline::init() {
 }
 
 
-CStatus GPipeline::run() {
+CStatus GPipelinePy::run() {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT(true)
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
@@ -74,7 +61,7 @@ CStatus GPipeline::run() {
 }
 
 
-CStatus GPipeline::destroy() {
+CStatus GPipelinePy::destroy() {
     CGRAPH_FUNCTION_BEGIN
 
     CGRAPH_ASSERT_INIT(true)
@@ -98,7 +85,7 @@ CStatus GPipeline::destroy() {
 }
 
 
-CStatus GPipeline::process(CSize runTimes) {
+CStatus GPipelinePy::process(CSize runTimes) {
     CGRAPH_FUNCTION_BEGIN
     status = init();
     CGRAPH_FUNCTION_CHECK_STATUS
@@ -113,7 +100,7 @@ CStatus GPipeline::process(CSize runTimes) {
 }
 
 
-CStatus GPipeline::dump(std::ostream& oss) {
+CStatus GPipelinePy::dump(std::ostream& oss) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
     oss << "digraph CGraph {\n";
@@ -129,7 +116,7 @@ CStatus GPipeline::dump(std::ostream& oss) {
 }
 
 
-GPipelinePtr GPipeline::setGElementRunTtl(CMSec ttl) {
+GPipelinePyPtr GPipelinePy::setGElementRunTtl(CMSec ttl) {
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
     CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(element_manager_)
     CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(element_manager_->engine_)
@@ -140,7 +127,7 @@ GPipelinePtr GPipeline::setGElementRunTtl(CMSec ttl) {
 }
 
 
-GPipelinePtr GPipeline::setGEngineType(GEngineType type) {
+GPipelinePyPtr GPipelinePy::setGEngineType(GEngineType type) {
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
     CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(element_manager_)
 
@@ -149,7 +136,7 @@ GPipelinePtr GPipeline::setGEngineType(GEngineType type) {
 }
 
 
-GPipelinePtr GPipeline::setUniqueThreadPoolConfig(const UThreadPoolConfig& config) {
+GPipelinePyPtr GPipelinePy::setUniqueThreadPoolConfig(const UThreadPoolConfig& config) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
 
@@ -162,7 +149,7 @@ GPipelinePtr GPipeline::setUniqueThreadPoolConfig(const UThreadPoolConfig& confi
 }
 
 
-GPipeline* GPipeline::setSharedThreadPool(UThreadPoolPtr ptr) {
+GPipelinePyPtr GPipelinePy::setSharedThreadPool(UThreadPoolPtr ptr) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_NOT_NULL_RETURN_NULL(ptr)
     CGRAPH_ASSERT_INIT_RETURN_NULL(false)
@@ -172,7 +159,7 @@ GPipeline* GPipeline::setSharedThreadPool(UThreadPoolPtr ptr) {
 }
 
 
-CStatus GPipeline::initSchedule() {
+CStatus GPipelinePy::initSchedule() {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_NOT_NULL(event_manager_)
     CGRAPH_ASSERT_NOT_NULL(element_manager_)
@@ -192,11 +179,11 @@ CStatus GPipeline::initSchedule() {
     CGRAPH_FUNCTION_END
 }
 
+CStatus GPipelinePy::registerGElement(GElementPtr elementRef,
+                                        const GElementPtrSet &dependElements,
+                                        const std::string &name,
+                                        CSize loop) {
 
-CStatus GPipeline::registerPyGElement(GElementPtr elementRef,
-                                      const GElementPtrSet &dependElements,
-                                      const std::string &name,
-                                      CSize loop) {
     CGRAPH_FUNCTION_BEGIN
     CGRAPH_ASSERT_INIT(false)
 
