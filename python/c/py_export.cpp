@@ -67,6 +67,14 @@ PYBIND11_MODULE(pyCGraph, m) {
         /* Inherit the constructors */
         using GNode::GNode;
 
+        // CStatus init() override {
+        //     PYBIND11_OVERRIDE_PURE(
+        //         CStatus,    /* Return type */
+        //         GNode,      /* Parent class */
+        //         init,         /* Name of function in C++ (must match Python name) */
+        //     );
+        // }
+
         /* Trampoline (need one for each virtual function) */
         CStatus run() override {
             PYBIND11_OVERRIDE_PURE(
@@ -94,6 +102,7 @@ PYBIND11_MODULE(pyCGraph, m) {
 
     py::class_<GNode, PyGNode, GElement,  std::unique_ptr<GNode, py::nodelete> >(m, "GNode")
         .def(py::init<>())
+        .def("init", &GNode::init)
         .def("run", &GNode::run)
         .def("destroy", &GNode::destroy);
 }

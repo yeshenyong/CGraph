@@ -8,6 +8,8 @@ class MyNodeA(pyCGraph.GNode):
     def run(self):
         print("MyNodeA running...")
         return pyCGraph.CStatus()
+    def __del__(self):
+        print("delete A")
 
 class MyNodeB(pyCGraph.GNode):
 
@@ -18,6 +20,9 @@ class MyNodeB(pyCGraph.GNode):
         time.sleep(2)
         return pyCGraph.CStatus()
 
+    def __del__(self):
+        print("delete B")
+
 class MyNodeC(pyCGraph.GNode):
 
     def run(self):
@@ -25,12 +30,16 @@ class MyNodeC(pyCGraph.GNode):
         time.sleep(2)
         count = 0
         return pyCGraph.CStatus()
+    def __del__(self):
+        print("delete C")
 
 class MyNodeD(pyCGraph.GNode):
 
     def run(self):
         print("MyNodeD running...")
         return pyCGraph.CStatus()
+    def __del__(self):
+        print("delete D")
 
 nodeA = MyNodeA()
 nodeB = MyNodeB()
@@ -65,3 +74,6 @@ print("==== tutorial_simple, loop : [%d], and run status = [%d].", 1, status.get
 # status = pipeline.destroy()
 
 pyCGraph.PipelineRemove(pipeline)
+
+nodeA.run()
+nodeB.run()
