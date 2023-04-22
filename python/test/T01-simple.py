@@ -34,7 +34,9 @@ class MyNodeC(pyCGraph.GNode):
         print("delete C")
 
 class MyNodeD(pyCGraph.GNode):
-
+    def init(self):
+        print("MyNode D init...")
+        return pyCGraph.CStatus()
     def run(self):
         print("MyNodeD running...")
         return pyCGraph.CStatus()
