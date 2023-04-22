@@ -71,9 +71,6 @@ print(status.isOK())
 status = pipeline.run()
 print("==== tutorial_simple, loop : [%d], and run status = [%d].", 1, status.getCode())
 
-# status = pipeline.destroy()
+status = pipeline.destroy()
 
 pyCGraph.PipelineRemove(pipeline)
-
-nodeA.run()
-nodeB.run()
