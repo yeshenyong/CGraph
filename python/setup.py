@@ -33,7 +33,6 @@ setup(name="pyCGraph",        # package name
       version="0.0.1",      # version
       description="Python Interface for CGraph",
       url="https://github.com/ChunelFeng/CGraph",
-      ext_package='CGraph',
       packages=find_packages(where='.'),
       package_data={'': ['python/lib/lib*.so*']},
       ext_modules=ext_modules)

@@ -1,47 +1,54 @@
 import sys
 import time
-from CGraph import pyCGraph
+from pyCGraph import GNode,CStatus,GPipelinePy
 
-class MyNodeA(pyCGraph.GNode):
-
-    # @override
+class MyNodeA(GNode):
+    def init(self):
+        print("MyNodeA init...")
+        return CStatus()
     def run(self):
         print("MyNodeA running...")
-        return pyCGraph.CStatus()
-    def __del__(self):
-        print("delete A")
+        return CStatus()
+    def destroy(self):
+        print("MyNodeA destroy...")
+        return CStatus()
 
-class MyNodeB(pyCGraph.GNode):
-
-    # @override
+class MyNodeB(GNode):
+    def init(self):
+        print("MyNodeB init...")
+        return CStatus()
     def run(self):
         print("MyNodeB running...")
         count = 0
         time.sleep(2)
-        return pyCGraph.CStatus()
+        return CStatus()
+    def destroy(self):
+        print("MyNodeB destroy...")
+        return CStatus()
 
-    def __del__(self):
-        print("delete B")
-
-class MyNodeC(pyCGraph.GNode):
-
+class MyNodeC(GNode):
+    def init(self):
+        print("MyNodeC init...")
+        return CStatus()
     def run(self):
         print("MyNodeC running...")
         time.sleep(2)
         count = 0
-        return pyCGraph.CStatus()
-    def __del__(self):
-        print("delete C")
+        return CStatus()
+    def destroy(self):
+        print("MyNodeC destroy...")
+        return CStatus()
 
-class MyNodeD(pyCGraph.GNode):
+class MyNodeD(GNode):
     def init(self):
-        print("MyNode D init...")
-        return pyCGraph.CStatus()
+        print("MyNodeD init...")
+        return CStatus()
     def run(self):
         print("MyNodeD running...")
-        return pyCGraph.CStatus()
-    def __del__(self):
-        print("delete D")
+        return CStatus()
+    def destroy(self):
+        print("MyNodeD destroy...")
+        return CStatus()
 
 nodeA = MyNodeA()
 nodeB = MyNodeB()
@@ -51,7 +58,7 @@ nodeD = MyNodeD()
 print(type(nodeA))
 print(MyNodeA.mro())
 
-pipeline = pyCGraph.PipelineCreate()
+pipeline = GPipelinePy()
 
 status = pipeline.registerGElement(nodeA)
 status = pipeline.registerGElement(nodeB, {nodeA}, "nodeB", 2)
@@ -74,5 +81,3 @@ status = pipeline.run()
 print("==== tutorial_simple, loop : [%d], and run status = [%d].", 1, status.getCode())
 
 status = pipeline.destroy()
-
-pyCGraph.PipelineRemove(pipeline)
