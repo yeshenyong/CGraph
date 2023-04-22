@@ -15,7 +15,7 @@ extra_compile_args.append('-fvisibility=hidden')
 
 include_dirs.append("/usr/include")
 include_dirs.append("/usr/local/include")
-include_dirs.append("../third_party/pybind11/include")
+include_dirs.append("../3rd-party/pybind11/pybind11/include")
 include_dirs.append("../src")
 
 sources = [root_dir + '/PyWrapper/py_export.cpp'] + glob.glob("../src/**/*.cpp", recursive=True)
